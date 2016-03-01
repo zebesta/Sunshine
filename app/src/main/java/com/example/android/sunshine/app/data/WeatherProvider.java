@@ -127,9 +127,9 @@ public class WeatherProvider extends ContentProvider {
         //Weather type
         uriMatcher.addURI(Authority, WeatherContract.PATH_WEATHER, WEATHER);
         //Weather with location type
-        uriMatcher.addURI(Authority, WeatherContract.PATH_WEATHER+"/*", WEATHER_WITH_LOCATION);
+        uriMatcher.addURI(Authority, WeatherContract.PATH_WEATHER + "/*", WEATHER_WITH_LOCATION);
         //Weather with location and date type
-        uriMatcher.addURI(Authority, WeatherContract.PATH_WEATHER+"/*/#", WEATHER_WITH_LOCATION_AND_DATE);
+        uriMatcher.addURI(Authority, WeatherContract.PATH_WEATHER + "/*/#", WEATHER_WITH_LOCATION_AND_DATE);
         //Location type
         uriMatcher.addURI(Authority, WeatherContract.PATH_LOCATION, LOCATION);
 
@@ -192,7 +192,7 @@ public class WeatherProvider extends ContentProvider {
             }
             // "weather"
             case WEATHER: {
-                retCursor  = mOpenHelper.getReadableDatabase().query(
+                retCursor = mOpenHelper.getReadableDatabase().query(
                         WeatherContract.WeatherEntry.TABLE_NAME,
                         projection,
                         selection,
@@ -224,7 +224,6 @@ public class WeatherProvider extends ContentProvider {
         retCursor.setNotificationUri(getContext().getContentResolver(), uri);
         return retCursor;
     }
-
 
 
     /*
@@ -266,17 +265,50 @@ public class WeatherProvider extends ContentProvider {
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         // Student: Start by getting a writable database
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
         // Student: Use the uriMatcher to match the WEATHER and LOCATION URI's we are going to
         // handle.  If it doesn't match these, throw an UnsupportedOperationException.
+        final int match = sUriMatcher.match(uri);
 
         // Student: A null value deletes all rows.  In my implementation of this, I only notified
         // the uri listeners (using the content resolver) if the rowsDeleted != 0 or the selection
         // is null.
+
         // Oh, and you should notify the listeners here.
 
         // Student: return the actual rows deleted
-        return 0;
+
+
+        int deletedRows;
+
+        switch (match) {
+            case WEATHER: {
+                int weatherDeletedRows = db.delete(WeatherContract.WeatherEntry.TABLE_NAME, selection, selectionArgs);
+                if (weatherDeletedRows != 0)
+                    deletedRows = weatherDeletedRows;
+                else
+                    throw new android.database.SQLException("Failed to delete row from " + uri);
+                break;
+            }
+            case LOCATION: {
+                int locationDeletedRows = db.delete(WeatherContract.LocationEntry.TABLE_NAME, selection, selectionArgs);
+                if (locationDeletedRows != 0)
+                    deletedRows = locationDeletedRows;
+                else
+                    throw new android.database.SQLException("Failed to delete row from " + uri);
+                break;
+
+            }
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+
+        }
+
+        if (deletedRows != 0)
+            getContext().getContentResolver().notifyChange(uri, null);
+        db.close();
+        return deletedRows;
     }
 
     private void normalizeDate(ContentValues values) {
