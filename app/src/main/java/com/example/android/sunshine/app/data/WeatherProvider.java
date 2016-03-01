@@ -275,39 +275,33 @@ public class WeatherProvider extends ContentProvider {
         // the uri listeners (using the content resolver) if the rowsDeleted != 0 or the selection
         // is null.
 
-        // Oh, and you should notify the listeners here.
-
-        // Student: return the actual rows deleted
-
+        //If selection is null delte all rows by setting selection equal to 1
+        if (selection == null){
+            selection = "1";
+        }
 
         int deletedRows;
 
         switch (match) {
             case WEATHER: {
-                int weatherDeletedRows = db.delete(WeatherContract.WeatherEntry.TABLE_NAME, selection, selectionArgs);
-                if (weatherDeletedRows != 0)
-                    deletedRows = weatherDeletedRows;
-                else
-                    throw new android.database.SQLException("Failed to delete row from " + uri);
+                deletedRows = db.delete(WeatherContract.WeatherEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             }
             case LOCATION: {
-                int locationDeletedRows = db.delete(WeatherContract.LocationEntry.TABLE_NAME, selection, selectionArgs);
-                if (locationDeletedRows != 0)
-                    deletedRows = locationDeletedRows;
-                else
-                    throw new android.database.SQLException("Failed to delete row from " + uri);
+                deletedRows = db.delete(WeatherContract.LocationEntry.TABLE_NAME, selection, selectionArgs);
                 break;
-
             }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
 
         }
 
+        // Oh, and you should notify the listeners here.
         if (deletedRows != 0)
             getContext().getContentResolver().notifyChange(uri, null);
-        db.close();
+        // Student: return the actual rows deleted
+
+        //db.close();
         return deletedRows;
     }
 
@@ -324,7 +318,32 @@ public class WeatherProvider extends ContentProvider {
             Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         // Student: This is a lot like the delete function.  We return the number of rows impacted
         // by the update.
-        return 0;
+
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+
+        int updatedRows;
+
+        switch (match) {
+            case WEATHER: {
+                normalizeDate(values);
+                updatedRows = db.update(WeatherContract.WeatherEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            }
+            case LOCATION: {
+                updatedRows = db.update(WeatherContract.LocationEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+
+            }
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+
+        }
+
+        if (updatedRows != 0)
+            getContext().getContentResolver().notifyChange(uri, null);
+        //db.close();
+        return updatedRows;
     }
 
     @Override
