@@ -77,6 +77,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public ForecastFragment() {
     }
 
+    public void onLocationChanged(){
+        updateWeather();
+        getLoaderManager().restartLoader(MY_LOADER_ID, null, this);
+    }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
 
@@ -116,16 +120,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-//        String locationSetting = Utility.getPreferredLocation(getActivity());
-//
-//        // Sort order:  Ascending, by date.
-//        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
-//        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
-//                locationSetting, System.currentTimeMillis());
-//
-//        Cursor cur = getActivity().getContentResolver().query(weatherForLocationUri,
-//                null, null, null, sortOrder);
-//
         mForecastAdapter = new ForecastAdapter(getActivity(), null, 0);
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
@@ -163,11 +157,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         weatherTask.execute(location);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        updateWeather();
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        updateWeather();
+//    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
@@ -191,10 +185,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                         null,            // No selection clause
                         null,            // No selection arguments
                         sortOrder             // Default sort order
-                        /*
-                        Cursor cur = getActivity().getContentResolver().query(weatherForLocationUri,
-                null, null, null, sortOrder);
-                         */
                 );
             default:
                 // An invalid id was passed in

@@ -115,7 +115,7 @@ public class DetailActivity extends ActionBarActivity{
      */
     public static class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-        private ShareActionProvider shareActionProvider;
+        private ShareActionProvider mShareActionProvider;
         private static final int MY_LOADER_ID = 666;
 
         private static final String LOG_TAG = DetailFragment.class.getSimpleName();
@@ -141,27 +141,6 @@ public class DetailActivity extends ActionBarActivity{
 
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-            // The detail Activity called via intent.  Inspect the intent for forecast data.
-//            Intent intent = getActivity().getIntent();
-//            if (intent != null){
-//                mForecastStr = intent.getDataString();
-//            }
-//            if (mForecastStr != null){
-////                TextView tv = (TextView) rootView.findViewById(R.id.detail_text);
-////                tv.setText();
-//                ((TextView) rootView.findViewById(R.id.detail_text))
-//                        .setText(mForecastStr);
-//            }
-
-//            if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
-//                mForecastStr = intent.getStringExtra(Intent.EXTRA_TEXT);
-//                ((TextView) rootView.findViewById(R.id.detail_text))
-//                        .setText(mForecastStr);
-//            }
-//            TextView tv = (TextView) rootView.findViewById(R.id.detail_text);
-//                tv.setText();
-//                ((TextView) rootView.findViewById(R.id.detail_text))
-//                        .setText((CharSequence) mForecastAdapter);
 
             return rootView;
         }
@@ -175,12 +154,12 @@ public class DetailActivity extends ActionBarActivity{
             MenuItem menuItem = menu.findItem(R.id.action_share);
 
             // Get the provider and hold onto it to set/change the share intent.
-            ShareActionProvider mShareActionProvider =
+            mShareActionProvider =
                     (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
 
             // Attach an intent to this ShareActionProvider.  You can update this at any time,
             // like when the user selects a new piece of data they might like to share.
-            if (mShareActionProvider != null ) {
+            if (mForecastStr != null ) {
                 mShareActionProvider.setShareIntent(createShareForecastIntent());
             } else {
                 Log.d(LOG_TAG, "Share Action Provider is null?");
@@ -205,25 +184,18 @@ public class DetailActivity extends ActionBarActivity{
                 case MY_LOADER_ID:
                     // Returns a new CursorLoader
 
-                    String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
 
-//                    String locationSetting = Utility.getPreferredLocation(getActivity());
-//                    Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
-//                            locationSetting, System.currentTimeMillis());
                     Intent intent = getActivity().getIntent();
-                    //Uri uri = Uri.parse(intent.getDataString());
+
 
                     return new CursorLoader(
                             getActivity(),   // Parent activity context
                             intent.getData(),        // Table to query
-                            FORECAST_COLUMNS,           //mProjection,     // Projection to return
+                            FORECAST_COLUMNS,       // Projection to return
                             null,            // No selection clause
                             null,            // No selection arguments
                             null             // Default sort order
-                        /*
-                        Cursor cur = getActivity().getContentResolver().query(weatherForLocationUri,
-                null, null, null, sortOrder);
-                         */
+
                     );
                 default:
                     // An invalid id was passed in
@@ -233,7 +205,6 @@ public class DetailActivity extends ActionBarActivity{
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            //mForecastAdapter.swapCursor(data);
             if(!data.moveToFirst()){
                 return;
             }
@@ -247,13 +218,14 @@ public class DetailActivity extends ActionBarActivity{
             TextView tv = (TextView) getView().findViewById(R.id.detail_text);
             tv.setText(mForecastStr);
 
+            if (mShareActionProvider!=null){
+                mShareActionProvider.setShareIntent(createShareForecastIntent());
+            }
 
         }
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
-            //mForecastAdapter.swapCursor(null);
-
         }
     }
 }

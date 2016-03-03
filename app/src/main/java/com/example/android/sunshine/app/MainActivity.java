@@ -28,6 +28,8 @@ import android.view.MenuItem;
 public class MainActivity extends ActionBarActivity {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
+    public String mLocation;
+    private final String FORECASTFRAGMENT_TAG = "Forecast fragment tag";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +37,27 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment())
+                    .add(R.id.container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
                     .commit();
+        }
+        SharedPreferences sharedPrefs =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        String mLocation = sharedPrefs.getString(
+                getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (Utility.getPreferredLocation(this) != mLocation){
+            ForecastFragment ff = (ForecastFragment)getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
+            ff.onLocationChanged();
+            SharedPreferences sharedPrefs =
+                    PreferenceManager.getDefaultSharedPreferences(this);
+            String mLocation = sharedPrefs.getString(
+                    getString(R.string.pref_location_key),
+                    getString(R.string.pref_location_default));
         }
     }
 
