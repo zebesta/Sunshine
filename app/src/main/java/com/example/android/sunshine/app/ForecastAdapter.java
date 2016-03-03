@@ -6,6 +6,7 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 
 /**
@@ -67,7 +68,24 @@ public class ForecastAdapter extends CursorAdapter {
         // our view is pretty simple here --- just a text view
         // we'll keep the UI functional with a simple (and slow!) binding.
 
-//        TextView tv = (TextView)view;
-//        tv.setText(convertCursorRowToUXFormat(cursor));
+        boolean isMetric = Utility.isMetric(context);
+
+
+        //set description
+        TextView descriptionView = (TextView) view.findViewById(R.id.list_item_forecast_textview);
+        descriptionView.setText(cursor.getString(ForecastFragment.COL_WEATHER_DESC));
+
+        //set high
+        TextView highView = (TextView) view.findViewById(R.id.list_item_high_textview);
+        //highView.setText(cursor.getString(ForecastFragment.COL_WEATHER_MAX_TEMP));
+        highView.setText(Utility.formatTemperature(cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP),isMetric));
+
+        //set low
+        TextView lowView = (TextView) view.findViewById(R.id.list_item_low_textview);
+        lowView.setText(Utility.formatTemperature(cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP), isMetric));
+
+        //set date
+        TextView dateView = (TextView) view.findViewById(R.id.list_item_date_textview);
+        dateView.setText(Utility.getFriendlyDayString(context, cursor.getLong(ForecastFragment.COL_WEATHER_DATE)));
     }
 }
