@@ -107,7 +107,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         // Attach an intent to this ShareActionProvider.  You can update this at any time,
         // like when the user selects a new piece of data they might like to share.
-        if (mForecastStr != null ) {
+        if (mForecastStr != null) {
             mShareActionProvider.setShareIntent(createShareForecastIntent());
         } else {
             Log.d(LOG_TAG, "Share Action Provider is null?");
@@ -135,6 +135,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
                 Intent intent = getActivity().getIntent();
 
+                if(intent == null || intent.getData()==null){
+                    return null;
+                }
 
                 return new CursorLoader(
                         getActivity(),   // Parent activity context
@@ -156,7 +159,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 //        if(!data.moveToFirst()){
 //            return;
 //        }
-        if(data!=null && data.moveToFirst()) {
+        if (data != null && data.moveToFirst()) {
             boolean isMetric = Utility.isMetric(getActivity());
 
             int weatherId = data.getInt(COL_WEATHER_CONDITION_ID);

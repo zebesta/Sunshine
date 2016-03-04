@@ -25,33 +25,50 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.android.sunshine.app.data.DetailFragment;
+
 public class MainActivity extends ActionBarActivity {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     public String mLocation;
-    private final String FORECASTFRAGMENT_TAG = "Forecast fragment tag";
+    public boolean mTwoPane;
+    //private final String FORECASTFRAGMENT_TAG = "Forecast fragment tag";
+    private final String DETAILFRAGMENT_TAG = "Detail fragment tag";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mLocation = Utility.getPreferredLocation(this);
+
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
-                    .commit();
-        }
-        SharedPreferences sharedPrefs =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        String mLocation = sharedPrefs.getString(
-                getString(R.string.pref_location_key),
-                getString(R.string.pref_location_default));
+
+        if (findViewById(R.id.weather_detail_container) != null) {
+            mTwoPane = true;
+
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.weather_detail_container, new DetailFragment())
+                        .commit();
+            }
+        } else mTwoPane = false;
+
+//        if (savedInstanceState == null) {
+//            getSupportFragmentManager().beginTransaction()
+//                    .add(R.id.container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
+//                    .commit();
+//        }
+//        SharedPreferences sharedPrefs =
+//                PreferenceManager.getDefaultSharedPreferences(this);
+//        String mLocation = sharedPrefs.getString(
+//                getString(R.string.pref_location_key),
+//                getString(R.string.pref_location_default));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (Utility.getPreferredLocation(this) != mLocation){
-            ForecastFragment ff = (ForecastFragment)getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
+        if (Utility.getPreferredLocation(this) != mLocation) {
+            ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
             ff.onLocationChanged();
             SharedPreferences sharedPrefs =
                     PreferenceManager.getDefaultSharedPreferences(this);
