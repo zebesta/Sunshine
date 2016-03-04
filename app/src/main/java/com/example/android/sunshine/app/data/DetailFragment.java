@@ -24,10 +24,12 @@ import com.example.android.sunshine.app.Utility;
 
 /**
  * Created by chrissebesta on 3/3/16.
+ * Populates the detailed weather report once a day is selected from the main weather menu.
+ * Introduces additional information including wind speed, wind direction, humidity, and pressure.
  */
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String[] FORECAST_COLUMNS = {
+    private static final String[] DETAIL_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
             // the content provider joins the location & weather tables in the background
             // (both have an _id column)
@@ -39,24 +41,27 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
             WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
             WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
-            WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING,
             WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
-            WeatherContract.LocationEntry.COLUMN_COORD_LAT,
-            WeatherContract.LocationEntry.COLUMN_COORD_LONG
+            WeatherContract.WeatherEntry.COLUMN_HUMIDITY,
+            WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
+            WeatherContract.WeatherEntry.COLUMN_DEGREES,
+            WeatherContract.WeatherEntry.COLUMN_PRESSURE,
+            WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING
     };
 
-    // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
+    // These indices are tied to DETAIL_COLUMNS.  If DETAIL_COLUMNS changes, these
     // must change.
     static final int COL_WEATHER_ID = 0;
     static final int COL_WEATHER_DATE = 1;
     static final int COL_WEATHER_DESC = 2;
     static final int COL_WEATHER_MAX_TEMP = 3;
     static final int COL_WEATHER_MIN_TEMP = 4;
-    static final int COL_LOCATION_SETTING = 5;
-    static final int COL_WEATHER_CONDITION_ID = 6;
-    static final int COL_COORD_LAT = 7;
-    static final int COL_COORD_LONG = 8;
-    
+    static final int COL_WEATHER_CONDITION_ID = 5;
+    static final int COL_HUMIDITY = 6;
+    static final int COL_WIND_SPEED = 7;
+    static final int COL_DEGREES = 8;
+    static final int COL_PRESSURE = 9;
+
     private ShareActionProvider mShareActionProvider;
     private static final int MY_LOADER_ID = 666;
 
@@ -80,6 +85,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        //TODO: Move the texit view and image view id finds here so that they are only found once instead of every time the data is updated.
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
@@ -133,7 +139,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 return new CursorLoader(
                         getActivity(),   // Parent activity context
                         intent.getData(),        // Table to query
-                        FORECAST_COLUMNS,       // Projection to return
+                        DETAIL_COLUMNS,       // Projection to return
                         null,            // No selection clause
                         null,            // No selection arguments
                         null             // Default sort order
@@ -147,48 +153,70 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if(!data.moveToFirst()){
-            return;
-        }
-        boolean isMetric = Utility.isMetric(getActivity());
-        String date = Utility.formatDate(data.getLong(COL_WEATHER_DATE));
-        String high = Utility.formatTemperature(getActivity(), data.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
-        String low = Utility.formatTemperature(getActivity(), data.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
-        String desc = data.getString(COL_WEATHER_DESC);
-        //mForecastStr = (date + " - "+desc + " - " + high +"/"+low);
+//        if(!data.moveToFirst()){
+//            return;
+//        }
+        if(data!=null && data.moveToFirst()) {
+            boolean isMetric = Utility.isMetric(getActivity());
 
-        //TextView tv = (TextView) getView().findViewById(R.id.detail_text);
-        //tv.setText(mForecastStr);
-        //set date
-        TextView dateView = (TextView) getView().findViewById(R.id.list_item_date_textview);
-        dateView.setText(date);
-        //set high
-        TextView highView = (TextView) getView().findViewById(R.id.list_item_high_textview);
-        highView.setText(high);
-        //set low
-        TextView lowView = (TextView) getView().findViewById(R.id.list_item_low_textview);
-        lowView.setText(low);
-        //set description
-        TextView descView = (TextView) getView().findViewById(R.id.list_item_forecast_textview);
-        descView.setText(desc);
-        //set icon
-        ImageView icon = (ImageView) getView().findViewById(R.id.list_item_icon);
-        icon.setImageResource(R.drawable.ic_launcher);
-        //set wind
-        //float windSpeed = data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED));
-        //float windDirection = data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DEGREES));
-
-//        float windSpeed = Weath
-//        TextView windView = (TextView) getView().findViewById(R.id.list_item_wind);
-//        windView.setText(Utility.getFormattedWind(getActivity(), windSpeed, windDirection));
+            int weatherId = data.getInt(COL_WEATHER_CONDITION_ID);
+            String day = Utility.getDayName(getActivity(), data.getLong(COL_WEATHER_DATE));
+            String date = Utility.formatDate(data.getLong(COL_WEATHER_DATE));
+            String high = Utility.formatTemperature(getActivity(), data.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
+            String low = Utility.formatTemperature(getActivity(), data.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
+            String desc = data.getString(COL_WEATHER_DESC);
+            float humidity = data.getFloat(COL_HUMIDITY);
+            float pressure = data.getFloat(COL_PRESSURE);
+            float windSpeed = data.getFloat(COL_WIND_SPEED);
+            float windDirection = data.getFloat(COL_DEGREES);
 
 
+            Log.d(LOG_TAG, "The raw wind speed is: " + windSpeed + " and the wind direction is: " + windDirection);
+            Log.d(LOG_TAG, "The humidity is: " + humidity + " and the pressure is: " + pressure);
+            //String pressure = "SO PRESSURE RIGHT NOW";
+            //mForecastStr = (date + " - "+desc + " - " + high +"/"+low);
+
+            //TextView tv = (TextView) getView().findViewById(R.id.detail_text);
+            //tv.setText(mForecastStr);
+
+            //set day
+            TextView dayView = (TextView) getView().findViewById(R.id.list_item_day_textview);
+            dayView.setText(day);
+            //set date
+            TextView dateView = (TextView) getView().findViewById(R.id.list_item_date_textview);
+            dateView.setText(date);
+            //set high
+            TextView highView = (TextView) getView().findViewById(R.id.list_item_high_textview);
+            highView.setText(high);
+            //set low
+            TextView lowView = (TextView) getView().findViewById(R.id.list_item_low_textview);
+            lowView.setText(low);
+            //set description
+            TextView descView = (TextView) getView().findViewById(R.id.list_item_forecast_textview);
+            descView.setText(desc);
+            //set icon
+            ImageView icon = (ImageView) getView().findViewById(R.id.list_item_icon);
+            icon.setImageResource(R.drawable.ic_launcher);
+
+            //set wind
+            //TODO: Need to actually pull wind speed and direction from the API request (as well as humidity and Pressure
+            //float windSpeed = 10;//data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED));
+            //float windDirection = 10;//data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DEGREES));
+            TextView windView = (TextView) getView().findViewById(R.id.list_item_wind);
+            windView.setText(Utility.getFormattedWind(getActivity(), windSpeed, windDirection));
+
+            //set humidity
+            TextView humidityView = (TextView) getView().findViewById(R.id.list_item_humidity);
+            humidityView.setText("Humidity: " + humidity);
+
+            //set pressure
+            TextView pressureView = (TextView) getView().findViewById(R.id.list_item_pressure);
+            pressureView.setText("Pressure: " + pressure);
 
 
-
-
-        if (mShareActionProvider!=null){
-            mShareActionProvider.setShareIntent(createShareForecastIntent());
+            if (mShareActionProvider != null) {
+                mShareActionProvider.setShareIntent(createShareForecastIntent());
+            }
         }
 
     }

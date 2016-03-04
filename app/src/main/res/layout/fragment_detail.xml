@@ -11,17 +11,21 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:isScrollContainer="true"
         android:orientation="vertical"
         tools:context="com.example.android.sunshine.app.DetailActivity.DetailFragment"
         android:padding="16dp">
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/list_item_day_textview"
+            android:padding="16dp"/>
+        <TextView
             android:id="@+id/list_item_date_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Today"
             android:padding="16dp"/>
         <!--<TextView-->
         <!--android:layout_width="match_parent"-->
@@ -45,14 +49,12 @@
                     android:id="@+id/list_item_high_textview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="35"
                     android:padding="16dp"/>
 
                 <TextView
                     android:id="@+id/list_item_low_textview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="25"
                     android:padding="16dp"/>
             </LinearLayout>
 
@@ -76,7 +78,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="Clear"
                     android:padding="16dp"/>
             </LinearLayout>
 
@@ -86,21 +87,18 @@
             android:id="@+id/list_item_humidity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Humidity"
             android:padding="16dp"/>
 
         <TextView
             android:id="@+id/list_item_wind"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Wind"
             android:padding="16dp"/>
 
         <TextView
             android:id="@+id/list_item_pressure"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Pressure"
             android:padding="16dp"/>
 
     </LinearLayout>
