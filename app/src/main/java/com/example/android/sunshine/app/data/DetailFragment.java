@@ -2,6 +2,7 @@ package com.example.android.sunshine.app.data;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -63,12 +64,13 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     static final int COL_PRESSURE = 9;
 
     private ShareActionProvider mShareActionProvider;
-    private static final int MY_LOADER_ID = 666;
+    private static final int MY_LOADER_ID = 0;
 
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
 
     private static final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
     private String mForecastStr;
+    private Uri mUri;
 
 
     public DetailFragment() {
@@ -124,34 +126,23 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            /*
-     * Takes action based on the ID of the Loader that's being created
-     */
-        switch (id) {
-            case MY_LOADER_ID:
-                // Returns a new CursorLoader
-
-
-                Intent intent = getActivity().getIntent();
-
-                if(intent == null || intent.getData()==null){
-                    return null;
-                }
-
-                return new CursorLoader(
-                        getActivity(),   // Parent activity context
-                        intent.getData(),        // Table to query
-                        DETAIL_COLUMNS,       // Projection to return
-                        null,            // No selection clause
-                        null,            // No selection arguments
-                        null             // Default sort order
-
-                );
-            default:
-                // An invalid id was passed in
-                return null;
+    public Loader onCreateLoader(int id, Bundle args) {
+        Log.v(LOG_TAG, "In onCreateLoader");
+        Intent intent = getActivity().getIntent();
+        if (intent == null || intent.getData() == null) {
+            return null;
         }
+
+        // Now create and return a CursorLoader that will take care of
+        // creating a Cursor for the data being displayed.
+        return new CursorLoader(
+                getActivity(),
+                mUri, //intent.getData(),
+                DETAIL_COLUMNS,
+                null,
+                null,
+                null
+        );
     }
 
     @Override
@@ -216,6 +207,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             TextView pressureView = (TextView) getView().findViewById(R.id.list_item_pressure);
             pressureView.setText("Pressure: " + pressure);
 
+            // We still need this for the share intent
+            mForecastStr = String.format("%s - %s - %s/%s", date, desc, high, low);
 
             if (mShareActionProvider != null) {
                 mShareActionProvider.setShareIntent(createShareForecastIntent());
@@ -226,5 +219,16 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+    }
+
+    public void onLocationChanged(String newLocation) {
+        // replace the uri, since the location has changed
+        Uri uri = mUri;
+        if (null != uri) {
+            long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
+            Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
+            mUri = updatedUri;
+            getLoaderManager().restartLoader(MY_LOADER_ID, null, this);
+        }
     }
 }

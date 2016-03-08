@@ -50,7 +50,9 @@ public class MainActivity extends ActionBarActivity {
                         .replace(R.id.weather_detail_container, new DetailFragment())
                         .commit();
             }
-        } else mTwoPane = false;
+        } else {
+            mTwoPane = false;
+        }
 
 //        if (savedInstanceState == null) {
 //            getSupportFragmentManager().beginTransaction()
@@ -67,15 +69,27 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (Utility.getPreferredLocation(this) != mLocation) {
+        String location = Utility.getPreferredLocation(this);
+
+        if (location != null && location != mLocation){
             ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
-            ff.onLocationChanged();
-            SharedPreferences sharedPrefs =
-                    PreferenceManager.getDefaultSharedPreferences(this);
-            String mLocation = sharedPrefs.getString(
-                    getString(R.string.pref_location_key),
-                    getString(R.string.pref_location_default));
+            if (null != ff){
+                ff.onLocationChanged();
+            }
+            DetailFragment df = (DetailFragment) getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
+            if (null !=df){
+                df.onLocationChanged(location);
+            }
         }
+//        if (Utility.getPreferredLocation(this) != mLocation) {
+//            ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
+//            ff.onLocationChanged();
+//            SharedPreferences sharedPrefs =
+//                    PreferenceManager.getDefaultSharedPreferences(this);
+//            String mLocation = sharedPrefs.getString(
+//                    getString(R.string.pref_location_key),
+//                    getString(R.string.pref_location_default));
+//        }
     }
 
     @Override

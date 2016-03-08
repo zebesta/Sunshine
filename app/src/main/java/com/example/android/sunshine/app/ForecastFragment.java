@@ -16,15 +16,14 @@
 package com.example.android.sunshine.app;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -60,10 +59,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
             WeatherContract.LocationEntry.COLUMN_COORD_LAT,
             WeatherContract.LocationEntry.COLUMN_COORD_LONG,
-            WeatherContract.WeatherEntry.COLUMN_HUMIDITY,
-            WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
-            WeatherContract.WeatherEntry.COLUMN_DEGREES,
-            WeatherContract.WeatherEntry.COLUMN_PRESSURE
+//            WeatherContract.WeatherEntry.COLUMN_HUMIDITY,
+//            WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
+//            WeatherContract.WeatherEntry.COLUMN_DEGREES,
+//            WeatherContract.WeatherEntry.COLUMN_PRESSURE
     };
 
     // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
@@ -77,10 +76,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     static final int COL_WEATHER_CONDITION_ID = 6;
     static final int COL_COORD_LAT = 7;
     static final int COL_COORD_LONG = 8;
-    static final int COL_HUMIDITY = 9;
-    static final int COL_WIND_SPEED = 10;
-    static final int COL_WIND_DIRECTION = 11;
-    static final int COL_PRESSURE = 12;
+//    static final int COL_HUMIDITY = 9;
+//    static final int COL_WIND_SPEED = 10;
+//    static final int COL_WIND_DIRECTION = 11;
+//    static final int COL_PRESSURE = 12;
+
 
     public ForecastFragment() {
     }
@@ -103,6 +103,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Add this line in order for this fragment to handle menu events.
+        Log.d("FFrag", "The forcast fragment has been created");
         setHasOptionsMenu(true);
     }
 
@@ -159,9 +160,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     private void updateWeather() {
         FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String location = prefs.getString(getString(R.string.pref_location_key),
-                getString(R.string.pref_location_default));
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//        String location = prefs.getString(getString(R.string.pref_location_key),
+//                getString(R.string.pref_location_default));
+
+        String location = Utility.getPreferredLocation(getActivity());
         weatherTask.execute(location);
     }
 
