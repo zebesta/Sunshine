@@ -64,7 +64,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     static final int COL_PRESSURE = 9;
 
     private ShareActionProvider mShareActionProvider;
-    private static final int MY_LOADER_ID = 0;
+    private static final int MY_LOADER_ID = 666;
 
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
 
@@ -87,7 +87,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //TODO: Move the texit view and image view id finds here so that they are only found once instead of every time the data is updated.
+        //TODO: Move the text view and image view id finds here so that they are only found once instead of every time the data is updated.
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
@@ -126,23 +126,34 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     @Override
-    public Loader onCreateLoader(int id, Bundle args) {
-        Log.v(LOG_TAG, "In onCreateLoader");
-        Intent intent = getActivity().getIntent();
-        if (intent == null || intent.getData() == null) {
-            return null;
-        }
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            /*
+     * Takes action based on the ID of the Loader that's being created
+     */
+        switch (id) {
+            case MY_LOADER_ID:
+                // Returns a new CursorLoader
 
-        // Now create and return a CursorLoader that will take care of
-        // creating a Cursor for the data being displayed.
-        return new CursorLoader(
-                getActivity(),
-                mUri, //intent.getData(),
-                DETAIL_COLUMNS,
-                null,
-                null,
-                null
-        );
+
+                Intent intent = getActivity().getIntent();
+
+                if(intent == null || intent.getData()==null){
+                    return null;
+                }
+
+                return new CursorLoader(
+                        getActivity(),   // Parent activity context
+                        intent.getData(),        // Table to query
+                        DETAIL_COLUMNS,       // Projection to return
+                        null,            // No selection clause
+                        null,            // No selection arguments
+                        null             // Default sort order
+
+                );
+            default:
+                // An invalid id was passed in
+                return null;
+        }
     }
 
     @Override
@@ -190,7 +201,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             descView.setText(desc);
             //set icon
             ImageView icon = (ImageView) getView().findViewById(R.id.list_item_icon);
-            icon.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
+            icon.setImageResource(R.drawable.ic_launcher);
 
             //set wind
             //TODO: Need to actually pull wind speed and direction from the API request (as well as humidity and Pressure
@@ -207,8 +218,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             TextView pressureView = (TextView) getView().findViewById(R.id.list_item_pressure);
             pressureView.setText("Pressure: " + pressure);
 
-            // We still need this for the share intent
-            mForecastStr = String.format("%s - %s - %s/%s", date, desc, high, low);
 
             if (mShareActionProvider != null) {
                 mShareActionProvider.setShareIntent(createShareForecastIntent());

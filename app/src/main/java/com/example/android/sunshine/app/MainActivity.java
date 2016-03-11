@@ -50,9 +50,7 @@ public class MainActivity extends ActionBarActivity {
                         .replace(R.id.weather_detail_container, new DetailFragment())
                         .commit();
             }
-        } else {
-            mTwoPane = false;
-        }
+        } else mTwoPane = false;
 
 //        if (savedInstanceState == null) {
 //            getSupportFragmentManager().beginTransaction()

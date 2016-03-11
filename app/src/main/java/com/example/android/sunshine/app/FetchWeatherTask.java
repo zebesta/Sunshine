@@ -114,6 +114,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
         String[] selectionArgs = {locationSetting};
         String[] columns = {WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING, WeatherContract.LocationEntry.COLUMN_CITY_NAME, WeatherContract.LocationEntry.COLUMN_COORD_LAT, WeatherContract.LocationEntry.COLUMN_COORD_LONG};
 
+        long locationId;
         Cursor cursor = mContext.getContentResolver().query(
                 WeatherContract.LocationEntry.CONTENT_URI, //table
                 new String[]{WeatherContract.LocationEntry._ID}, //columns to return
@@ -126,7 +127,8 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
 
         //If the cursor returned a valid position, return the ID of the row the cursor is pointing at
         if (cursor.moveToFirst()) {
-            return cursor.getLong(cursor.getColumnIndex(WeatherContract.LocationEntry._ID));
+            locationId = cursor.getLong(cursor.getColumnIndex(WeatherContract.LocationEntry._ID));
+            //return cursor.getLong(cursor.getColumnIndex(WeatherContract.LocationEntry._ID));
         }
         //if it did not return location, create the location's content values and insert them in to the table
         else {
@@ -151,12 +153,16 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
                     null
             );
             //The ID is at the end of the returned URI
-            long insertedId = ContentUris.parseId(insertedUri);
+            locationId = ContentUris.parseId(insertedUri);
 //            if (insertedCursor.moveToFirst()){
 //                return insertedCursor.getLong(insertedCursor.getColumnIndex(WeatherContract.LocationEntry._ID));
 //            }
-            return insertedId;
+
+
         }
+        //Close cursor and return long for where cursor is pointing to
+        cursor.close();
+        return locationId;
     }
 
     /*
@@ -425,12 +431,16 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
                 return null;
             }
             forecastJsonStr = buffer.toString();
+            getWeatherDataFromJson(forecastJsonStr, locationQuery);
             Log.d("JSON", "The buffer is showing: "+forecastJsonStr);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
             // If the code didn't successfully get the weather data, there's no point in attemping
             // to parse it.
             return null;
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, "Error: "+e);
+            e.printStackTrace();
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
