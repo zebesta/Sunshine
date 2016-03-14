@@ -31,7 +31,7 @@ public class MainActivity extends ActionBarActivity {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     public String mLocation;
-    public boolean mTwoPane;
+    public static boolean mTwoPane;
     //private final String FORECASTFRAGMENT_TAG = "Forecast fragment tag";
     private final String DETAILFRAGMENT_TAG = "Detail fragment tag";
 
@@ -47,7 +47,7 @@ public class MainActivity extends ActionBarActivity {
 
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.weather_detail_container, new DetailFragment())
+                        .replace(R.id.weather_detail_container, new DetailFragment(), DETAILFRAGMENT_TAG)
                         .commit();
             }
         } else mTwoPane = false;
@@ -61,6 +61,10 @@ public class MainActivity extends ActionBarActivity {
             ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
             if(null != ff){
                 ff.onLocationChanged();
+            }
+            DetailFragment df = (DetailFragment) getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
+            if (null != df){
+                df.onLocationChanged(location);
             }
             mLocation = location;
         }
@@ -115,5 +119,9 @@ public class MainActivity extends ActionBarActivity {
         } else {
             Log.d(LOG_TAG, "Couldn't call " + location + ", no receiving apps installed!");
         }
+    }
+
+    public static boolean getTwoPane(){
+        return mTwoPane;
     }
 }

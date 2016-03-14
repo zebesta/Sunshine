@@ -2,6 +2,7 @@ package com.example.android.sunshine.app.data;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -69,6 +70,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     private static final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
     private String mForecastStr;
+    private Uri mUri;
 
 
     public DetailFragment() {
@@ -85,7 +87,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //TODO: Move the texit view and image view id finds here so that they are only found once instead of every time the data is updated.
+        //TODO: Move the text view and image view id finds here so that they are only found once instead of every time the data is updated.
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
@@ -226,5 +228,15 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+    }
+
+    public void onLocationChanged(String location) {
+        Uri uri = mUri;
+        if(null != uri){
+            long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
+            Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(location, date);
+            mUri = updatedUri;
+            getLoaderManager().restartLoader(MY_LOADER_ID, null, this);
+        }
     }
 }
