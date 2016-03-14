@@ -27,11 +27,11 @@ import android.view.MenuItem;
 
 import com.example.android.sunshine.app.data.DetailFragment;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements ForecastFragment.Callback {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     public String mLocation;
-    public static boolean mTwoPane;
+    public boolean mTwoPane;
     //private final String FORECASTFRAGMENT_TAG = "Forecast fragment tag";
     private final String DETAILFRAGMENT_TAG = "Detail fragment tag";
 
@@ -59,11 +59,11 @@ public class MainActivity extends ActionBarActivity {
         String location = Utility.getPreferredLocation(this);
         if (location != null && !location.equals(mLocation)) {
             ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
-            if(null != ff){
+            if (null != ff) {
                 ff.onLocationChanged();
             }
             DetailFragment df = (DetailFragment) getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
-            if (null != df){
+            if (null != df) {
                 df.onLocationChanged(location);
             }
             mLocation = location;
@@ -121,7 +121,33 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    public static boolean getTwoPane(){
-        return mTwoPane;
+    @Override
+    public void onItemSelected(Uri dateUri) {
+        //TODO: Need to handle the updated Uri and passing it to detail fragment here, need to figure out how thats best done
+        //handle the tablet UI case with two panes by updating the detail fragment pane
+        if (mTwoPane) {
+
+            //create new detail fragment with index as a passed argument (position of the clicked item in the list?)
+            DetailFragment df = new DetailFragment();
+
+            //Bundles can be used to pass things in
+            Bundle args = new Bundle();
+            //pass date as a parcable
+            args.putParcelable(DetailFragment.DETAIL_URI, dateUri);
+
+
+            //update fragment manager to show the new detail fragment
+            df.setArguments(args);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.weather_detail_container, df, DETAILFRAGMENT_TAG)
+                    .commit();
+        } else {
+            //handle the phone UI case with a single pane by starting the detail activity
+            Intent intent = new Intent(this, DetailActivity.class)
+                    .setData(dateUri);
+            startActivity(intent);
+
+        }
     }
 }

@@ -62,6 +62,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     static final int COL_WIND_SPEED = 7;
     static final int COL_DEGREES = 8;
     static final int COL_PRESSURE = 9;
+    public static final String DETAIL_URI = "Detail URI index";
 
     private ShareActionProvider mShareActionProvider;
     private static final int MY_LOADER_ID = 666;
@@ -72,6 +73,20 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private String mForecastStr;
     private Uri mUri;
 
+    public static DetailFragment newInstance(int index) {
+        DetailFragment f = new DetailFragment();
+
+//        supply index input as an argument
+//        Bundle args = new Bundle();
+//        args.putInt("index", index);
+//        f.setArguments(args);
+
+        return f;
+    }
+
+    public int getShownIndex() {
+        return getArguments().getInt("index", 0);
+    }
 
     public DetailFragment() {
         setHasOptionsMenu(true);
@@ -87,6 +102,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        //get the arguments that the fragment was initialized with
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mUri = arguments.getParcelable(DETAIL_URI);
+        }
         //TODO: Move the text view and image view id finds here so that they are only found once instead of every time the data is updated.
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
@@ -135,21 +156,21 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 // Returns a new CursorLoader
 
 
-                Intent intent = getActivity().getIntent();
+                //mUri is now coming from the arguments passed from main activity
+                if (mUri != null) {
 
-                if(intent == null || intent.getData()==null){
+                    return new CursorLoader(
+                            getActivity(),   // Parent activity context
+                            mUri, //intent.getData(),        // Table to query
+                            DETAIL_COLUMNS,       // Projection to return
+                            null,            // No selection clause
+                            null,            // No selection arguments
+                            null             // Default sort order
+
+                    );
+                } else {
                     return null;
                 }
-
-                return new CursorLoader(
-                        getActivity(),   // Parent activity context
-                        intent.getData(),        // Table to query
-                        DETAIL_COLUMNS,       // Projection to return
-                        null,            // No selection clause
-                        null,            // No selection arguments
-                        null             // Default sort order
-
-                );
             default:
                 // An invalid id was passed in
                 return null;
@@ -232,7 +253,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     public void onLocationChanged(String location) {
         Uri uri = mUri;
-        if(null != uri){
+        if (null != uri) {
             long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
             Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(location, date);
             mUri = updatedUri;

@@ -15,7 +15,7 @@
  */
 package com.example.android.sunshine.app;
 
-import android.content.Intent;
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -25,7 +25,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,6 +40,8 @@ import com.example.android.sunshine.app.data.WeatherContract;
  * Encapsulates fetching the forecast and displaying it as a {@link ListView} layout.
  */
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+    Callback mCallback;
+    int mPosition;
 
     private ForecastAdapter mForecastAdapter;
     private static final int MY_LOADER_ID = 666;
@@ -144,20 +145,28 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 // if it cannot seek to that position.
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
+                    //update location setting
                     String locationSetting = Utility.getPreferredLocation(getActivity());
-                    boolean twoPane = MainActivity.getTwoPane();
-                    if (twoPane){
-                        Uri weatherUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, cursor.getLong(COL_WEATHER_DATE));
-
-                        Log.d("CLICK", "The item was clicked and its in tablet mode, uri is: "+weatherUri);
-
-                    }else {
-                        Intent intent = new Intent(getActivity(), DetailActivity.class)
-                                .setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
-                                        locationSetting, cursor.getLong(COL_WEATHER_DATE)
-                                ));
-                        startActivity(intent);
-                    }
+                    //update Uri with new location setting and date received from cursor
+                    Uri weatherUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, cursor.getLong(COL_WEATHER_DATE));
+                    //call the main activities Callback function
+                    ((Callback) getActivity()).onItemSelected(weatherUri);
+                    mPosition = position;
+                    //mCallback.onItemSelected(weatherUri);
+//                    boolean twoPane = MainActivity.getTwoPane();
+//                    if (twoPane){
+//                        //TODO: need to attach potition to the index in the bundle for the details fragment
+//                        Uri weatherUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, cursor.getLong(COL_WEATHER_DATE));
+//                        mCallback.onItemSelected(weatherUri);
+//                        Log.d("CLICK", "The item was clicked and its in tablet mode, uri is: "+weatherUri);
+//
+//                    }else {
+//                        Intent intent = new Intent(getActivity(), DetailActivity.class)
+//                                .setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
+//                                        locationSetting, cursor.getLong(COL_WEATHER_DATE)
+//                                ));
+//                        startActivity(intent);
+//                    }
                 }
 
             }
@@ -236,5 +245,15 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
          * DetailFragmentCallback for when an item has been selected.
          */
         public void onItemSelected(Uri dateUri);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mCallback = (Callback) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement Callback");
+        }
     }
 }
