@@ -51,30 +51,18 @@ public class MainActivity extends ActionBarActivity {
                         .commit();
             }
         } else mTwoPane = false;
-
-//        if (savedInstanceState == null) {
-//            getSupportFragmentManager().beginTransaction()
-//                    .add(R.id.container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
-//                    .commit();
-//        }
-//        SharedPreferences sharedPrefs =
-//                PreferenceManager.getDefaultSharedPreferences(this);
-//        String mLocation = sharedPrefs.getString(
-//                getString(R.string.pref_location_key),
-//                getString(R.string.pref_location_default));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (Utility.getPreferredLocation(this) != mLocation) {
+        String location = Utility.getPreferredLocation(this);
+        if (location != null && !location.equals(mLocation)) {
             ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
-            ff.onLocationChanged();
-            SharedPreferences sharedPrefs =
-                    PreferenceManager.getDefaultSharedPreferences(this);
-            String mLocation = sharedPrefs.getString(
-                    getString(R.string.pref_location_key),
-                    getString(R.string.pref_location_default));
+            if(null != ff){
+                ff.onLocationChanged();
+            }
+            mLocation = location;
         }
     }
 
