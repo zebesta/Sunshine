@@ -67,8 +67,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:padding="16dp"
-                    android:text="clear"/>
+                    android:padding="16dp" />
             </LinearLayout>
 
         </LinearLayout>

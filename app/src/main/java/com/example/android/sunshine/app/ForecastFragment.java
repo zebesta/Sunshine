@@ -39,14 +39,17 @@ import com.example.android.sunshine.app.data.WeatherContract;
 /**
  * Encapsulates fetching the forecast and displaying it as a {@link ListView} layout.
  */
-public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     public static final String POSITION = "position";
     Callback mCallback;
     int mPosition;
     int mSavedPosition;
+    boolean mUseTodayLayout;
 
     private ForecastAdapter mForecastAdapter;
     private static final int MY_LOADER_ID = 666;
+
+
 
     private static final String[] FORECAST_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
@@ -89,10 +92,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public ForecastFragment() {
     }
 
-    public void onLocationChanged(){
+    public void onLocationChanged() {
         updateWeather();
         getLoaderManager().restartLoader(MY_LOADER_ID, null, this);
     }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
 
@@ -102,8 +106,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         super.onActivityCreated(savedInstanceState);
     }
+
     @Override
-    public void onSaveInstanceState(Bundle outState){
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(POSITION, mSavedPosition);
     }
@@ -138,7 +143,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                              final Bundle savedInstanceState) {
 
         mForecastAdapter = new ForecastAdapter(getActivity(), null, 0);
-        if(savedInstanceState != null){
+        mForecastAdapter.SetUseTodayLayout(mUseTodayLayout);
+
+        if (savedInstanceState != null) {
             mSavedPosition = savedInstanceState.getInt(POSITION);
         }
 
@@ -271,6 +278,15 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             mCallback = (Callback) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement Callback");
+        }
+    }
+
+    //Method to set whether or not to use the today layout as a seperate layout in the list view
+    //dont do in two pane mode
+    public void SetUseTodayLayout(boolean useTodayView) {
+        mUseTodayLayout = useTodayView;
+        if (mForecastAdapter != null) {
+            mForecastAdapter.SetUseTodayLayout(useTodayView);
         }
     }
 }
