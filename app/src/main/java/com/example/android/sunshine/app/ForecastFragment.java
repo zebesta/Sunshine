@@ -40,8 +40,10 @@ import com.example.android.sunshine.app.data.WeatherContract;
  * Encapsulates fetching the forecast and displaying it as a {@link ListView} layout.
  */
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+    public static final String POSITION = "position";
     Callback mCallback;
     int mPosition;
+//    int mSavedPosition;
 
     private ForecastAdapter mForecastAdapter;
     private static final int MY_LOADER_ID = 666;
@@ -100,6 +102,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         super.onActivityCreated(savedInstanceState);
     }
+//    @Override
+//    public void onSaveInstanceState(Bundle outState){
+//        super.onSaveInstanceState(outState);
+//        outState.putInt(POSITION, mSavedPosition);
+//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -128,9 +135,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
 
         mForecastAdapter = new ForecastAdapter(getActivity(), null, 0);
+//        mSavedPosition = savedInstanceState.getInt(POSITION);
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -152,6 +160,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                     //call the main activities Callback function
                     ((Callback) getActivity()).onItemSelected(weatherUri);
                     mPosition = position;
+//                    savedInstanceState.putInt(POSITION, mPosition);
                     //mCallback.onItemSelected(weatherUri);
 //                    boolean twoPane = MainActivity.getTwoPane();
 //                    if (twoPane){
@@ -226,6 +235,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         //PERFORM ANY UI UPDATES HERE
 
+//        ListView lv = (ListView) getView().findViewById(R.id.listview_forecast);
+//        lv.smoothScrollToPosition(mSavedPosition);
     }
 
     @Override
