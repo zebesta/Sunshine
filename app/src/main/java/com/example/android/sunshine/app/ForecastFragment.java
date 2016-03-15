@@ -43,7 +43,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public static final String POSITION = "position";
     Callback mCallback;
     int mPosition;
-//    int mSavedPosition;
+    int mSavedPosition;
 
     private ForecastAdapter mForecastAdapter;
     private static final int MY_LOADER_ID = 666;
@@ -102,11 +102,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         super.onActivityCreated(savedInstanceState);
     }
-//    @Override
-//    public void onSaveInstanceState(Bundle outState){
-//        super.onSaveInstanceState(outState);
-//        outState.putInt(POSITION, mSavedPosition);
-//    }
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        outState.putInt(POSITION, mSavedPosition);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -138,7 +138,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                              final Bundle savedInstanceState) {
 
         mForecastAdapter = new ForecastAdapter(getActivity(), null, 0);
-//        mSavedPosition = savedInstanceState.getInt(POSITION);
+        if(savedInstanceState != null){
+            mSavedPosition = savedInstanceState.getInt(POSITION);
+        }
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -160,7 +162,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                     //call the main activities Callback function
                     ((Callback) getActivity()).onItemSelected(weatherUri);
                     mPosition = position;
-//                    savedInstanceState.putInt(POSITION, mPosition);
+                    mSavedPosition = position;
+//                    if(savedInstanceState!=null){
+//                        savedInstanceState.putInt(POSITION, mPosition);
+//                    }
+
                     //mCallback.onItemSelected(weatherUri);
 //                    boolean twoPane = MainActivity.getTwoPane();
 //                    if (twoPane){
@@ -235,8 +241,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         //PERFORM ANY UI UPDATES HERE
 
-//        ListView lv = (ListView) getView().findViewById(R.id.listview_forecast);
-//        lv.smoothScrollToPosition(mSavedPosition);
+        ListView lv = (ListView) getView().findViewById(R.id.listview_forecast);
+        lv.smoothScrollToPosition(mSavedPosition);
     }
 
     @Override
