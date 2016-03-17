@@ -8,6 +8,8 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityManager;
 
 /**
  * Created by chrissebesta on 3/17/16.
@@ -39,6 +41,13 @@ public class MyView extends View {
         mPath = new Path();
         mLargeCircle = new RectF();
         mSmallCircle = new RectF();
+
+        AccessibilityManager accessibilityManager =
+                (AccessibilityManager) context.getSystemService(Context.ACCESSIBILITY_SERVICE);
+        if (accessibilityManager.isEnabled()) {
+            sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED);
+        }
+
     }
 
     public void setDegrees(float degrees) {
@@ -84,5 +93,29 @@ public class MyView extends View {
         canvas.drawOval(mLargeCircle, mPaint);
         // Draw the small circle.
         canvas.drawOval(mSmallCircle, mPaint);
+    }
+
+    @Override
+    public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
+        String direction = "Unknown";
+        if (mDegrees >= 337.5 || mDegrees < 22.5) {
+            direction = "N";
+        } else if (mDegrees >= 22.5 && mDegrees < 67.5) {
+            direction = "NE";
+        } else if (mDegrees >= 67.5 && mDegrees < 112.5) {
+            direction = "E";
+        } else if (mDegrees >= 112.5 && mDegrees < 157.5) {
+            direction = "SE";
+        } else if (mDegrees >= 157.5 && mDegrees < 202.5) {
+            direction = "S";
+        } else if (mDegrees >= 202.5 && mDegrees < 247.5) {
+            direction = "SW";
+        } else if (mDegrees >= 247.5 && mDegrees < 292.5) {
+            direction = "W";
+        } else if (mDegrees >= 292.5 || mDegrees < 22.5) {
+            direction = "NW";
+        }
+        event.getText().add(direction);
+        return true;
     }
 }

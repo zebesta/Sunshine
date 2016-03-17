@@ -20,7 +20,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.android.sunshine.app.MyView;
 import com.example.android.sunshine.app.R;
 import com.example.android.sunshine.app.Utility;
 
@@ -74,7 +73,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private String mForecastStr;
     private Uri mUri;
 
-    private MyView myView;
+    //private MyView myView;
     private TextView dayView;
     private TextView dateView;
     private TextView highView;
@@ -122,7 +121,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         }
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        myView = (MyView) rootView.findViewById(R.id.list_item_compass);
+        //myView = (MyView) rootView.findViewById(R.id.list_item_compass);
         dayView = (TextView) rootView.findViewById(R.id.list_item_day_textview);
         dateView = (TextView) rootView.findViewById(R.id.list_item_date_textview);
         highView = (TextView) rootView.findViewById(R.id.list_item_high_textview);
@@ -242,13 +241,16 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             //set wind
             windView.setText(Utility.getFormattedWind(getActivity(), windSpeed, windDirection));
 
+
+            //TODO: Get this compass to properly update wind direction
             Log.d("COMPASS", "Im drawing to the compass and my wind direction is: " + windDirection);
-           // myView.setDegrees(windDirection);
+           //myView.setDegrees(windDirection);
 //            compass.invalidate();
 //            if (compass != null) {
 //                compass.updateData(windDirection);
 //                Log.d("COMPASS", "Im drawing to the compass and my wind direction is: "+windDirection);
 //            }
+
 
             //set humidity
             humidityView.setText("Humidity: " + humidity);
