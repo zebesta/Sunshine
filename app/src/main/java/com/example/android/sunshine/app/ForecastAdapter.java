@@ -38,10 +38,6 @@ public class ForecastAdapter extends CursorAdapter {
         return highLowStr;
     }
 
-    /*
-        This is ported from FetchWeatherTask --- but now we go straight from the cursor to the
-        string.
-     */
     private String convertCursorRowToUXFormat(Cursor cursor) {
         // get row indices for our cursor
         //REPLACED dynamic row indice calculation with constants and a projection in the forecast fragment
