@@ -170,25 +170,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                     ((Callback) getActivity()).onItemSelected(weatherUri);
                     mPosition = position;
                     mSavedPosition = position;
-//                    if(savedInstanceState!=null){
-//                        savedInstanceState.putInt(POSITION, mPosition);
-//                    }
 
-                    //mCallback.onItemSelected(weatherUri);
-//                    boolean twoPane = MainActivity.getTwoPane();
-//                    if (twoPane){
-//                        //TODO: need to attach potition to the index in the bundle for the details fragment
-//                        Uri weatherUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, cursor.getLong(COL_WEATHER_DATE));
-//                        mCallback.onItemSelected(weatherUri);
-//                        Log.d("CLICK", "The item was clicked and its in tablet mode, uri is: "+weatherUri);
-//
-//                    }else {
-//                        Intent intent = new Intent(getActivity(), DetailActivity.class)
-//                                .setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
-//                                        locationSetting, cursor.getLong(COL_WEATHER_DATE)
-//                                ));
-//                        startActivity(intent);
-//                    }
+
                 }
 
             }
@@ -205,11 +188,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         weatherTask.execute(location);
     }
 
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        updateWeather();
-//    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {

@@ -74,7 +74,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private String mForecastStr;
     private Uri mUri;
 
-    //TODO: move all the views here so they dont have to keep getting found
     private MyView myView;
     private TextView dayView;
     private TextView dateView;
@@ -121,8 +120,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         if (arguments != null) {
             mUri = arguments.getParcelable(DETAIL_URI);
         }
-        //TODO: Move the text view and image view id finds here so that they are only found once instead of every time the data is updated.
-
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         myView = (MyView) rootView.findViewById(R.id.list_item_compass);
@@ -243,9 +240,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             icon.setContentDescription(desc);
 
             //set wind
-            //TODO: Need to actually pull wind speed and direction from the API request (as well as humidity and Pressure
-            //float windSpeed = 10;//data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED));
-            //float windDirection = 10;//data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DEGREES));
             windView.setText(Utility.getFormattedWind(getActivity(), windSpeed, windDirection));
 
             Log.d("COMPASS", "Im drawing to the compass and my wind direction is: " + windDirection);

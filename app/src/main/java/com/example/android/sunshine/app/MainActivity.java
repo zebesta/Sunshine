@@ -131,8 +131,6 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
 
     @Override
     public void onItemSelected(Uri dateUri) {
-        //TODO: Need to handle the updated Uri and passing it to detail fragment here, need to figure out how thats best done
-        //handle the tablet UI case with two panes by updating the detail fragment pane
         if (mTwoPane) {
 
             //create new detail fragment with index as a passed argument (position of the clicked item in the list?)
