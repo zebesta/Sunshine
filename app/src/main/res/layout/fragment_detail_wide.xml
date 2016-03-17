@@ -76,6 +76,10 @@
             android:textSize="22sp"
             android:fontFamily="sans-serif-condensed"
             android:textColor="@color/text_black"/>
+        <com.example.android.sunshine.app.MyView
+            android.id="@+id/list_item_compass"
+            android:layout_width="100dp"
+            android:layout_height="100dp" />
 
 
     </LinearLayout>

@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.android.sunshine.app.MyView;
 import com.example.android.sunshine.app.R;
 import com.example.android.sunshine.app.Utility;
 
@@ -73,6 +74,18 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private String mForecastStr;
     private Uri mUri;
 
+    //TODO: move all the views here so they dont have to keep getting found
+    private MyView myView;
+    private TextView dayView;
+    private TextView dateView;
+    private TextView highView;
+    private TextView lowView;
+    private TextView descView;
+    private ImageView icon;
+    private TextView windView;
+    private TextView humidityView;
+    private TextView pressureView;
+
     public static DetailFragment newInstance(int index) {
         DetailFragment f = new DetailFragment();
 
@@ -112,6 +125,16 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
+        myView = (MyView) rootView.findViewById(R.id.list_item_compass);
+        dayView = (TextView) rootView.findViewById(R.id.list_item_day_textview);
+        dateView = (TextView) rootView.findViewById(R.id.list_item_date_textview);
+        highView = (TextView) rootView.findViewById(R.id.list_item_high_textview);
+        lowView = (TextView) rootView.findViewById(R.id.list_item_low_textview);
+        descView = (TextView) rootView.findViewById(R.id.list_item_forecast_textview);
+        icon = (ImageView) rootView.findViewById(R.id.list_item_icon);
+        windView = (TextView) rootView.findViewById(R.id.list_item_wind);
+        humidityView = (TextView) rootView.findViewById(R.id.list_item_humidity);
+        pressureView = (TextView) rootView.findViewById(R.id.list_item_pressure);
 
         return rootView;
     }
@@ -206,22 +229,16 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             //tv.setText(mForecastStr);
 
             //set day
-            TextView dayView = (TextView) getView().findViewById(R.id.list_item_day_textview);
             dayView.setText(day);
             //set date
-            TextView dateView = (TextView) getView().findViewById(R.id.list_item_date_textview);
             dateView.setText(date);
             //set high
-            TextView highView = (TextView) getView().findViewById(R.id.list_item_high_textview);
             highView.setText(high);
             //set low
-            TextView lowView = (TextView) getView().findViewById(R.id.list_item_low_textview);
             lowView.setText(low);
             //set description
-            TextView descView = (TextView) getView().findViewById(R.id.list_item_forecast_textview);
             descView.setText(desc);
             //set icon
-            ImageView icon = (ImageView) getView().findViewById(R.id.list_item_icon);
             icon.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
             icon.setContentDescription(desc);
 
@@ -229,15 +246,20 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             //TODO: Need to actually pull wind speed and direction from the API request (as well as humidity and Pressure
             //float windSpeed = 10;//data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED));
             //float windDirection = 10;//data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DEGREES));
-            TextView windView = (TextView) getView().findViewById(R.id.list_item_wind);
             windView.setText(Utility.getFormattedWind(getActivity(), windSpeed, windDirection));
 
+            Log.d("COMPASS", "Im drawing to the compass and my wind direction is: " + windDirection);
+           // myView.setDegrees(windDirection);
+//            compass.invalidate();
+//            if (compass != null) {
+//                compass.updateData(windDirection);
+//                Log.d("COMPASS", "Im drawing to the compass and my wind direction is: "+windDirection);
+//            }
+
             //set humidity
-            TextView humidityView = (TextView) getView().findViewById(R.id.list_item_humidity);
             humidityView.setText("Humidity: " + humidity);
 
             //set pressure
-            TextView pressureView = (TextView) getView().findViewById(R.id.list_item_pressure);
             pressureView.setText("Pressure: " + pressure);
 
 

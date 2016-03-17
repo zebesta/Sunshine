@@ -69,8 +69,8 @@
 
                 <ImageView
                     android:id="@+id/list_item_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
 
                     />
 
@@ -100,6 +100,10 @@
             style="@style/WeatherConditionItem"
             android:id="@+id/list_item_pressure"
             />
+        <com.example.android.sunshine.app.MyView
+            android.id="@+id/list_item_compass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 </ScrollView>
