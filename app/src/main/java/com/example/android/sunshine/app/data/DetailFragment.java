@@ -223,6 +223,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             //set icon
             ImageView icon = (ImageView) getView().findViewById(R.id.list_item_icon);
             icon.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
+            icon.setContentDescription(desc);
 
             //set wind
             //TODO: Need to actually pull wind speed and direction from the API request (as well as humidity and Pressure

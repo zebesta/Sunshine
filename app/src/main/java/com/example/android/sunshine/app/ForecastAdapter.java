@@ -115,6 +115,8 @@ public class ForecastAdapter extends CursorAdapter {
 
         //set description
         viewHolder.forecastDescriptionView.setText(cursor.getString(ForecastFragment.COL_WEATHER_DESC));
+        //set test for content description for accessibility
+        viewHolder.forecastDescriptionView.setContentDescription(cursor.getString(ForecastFragment.COL_WEATHER_DESC));
 
         //set high
         viewHolder.highTempView.setText(Utility.formatTemperature(context, cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP),isMetric));
