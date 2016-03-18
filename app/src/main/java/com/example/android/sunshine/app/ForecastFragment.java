@@ -180,21 +180,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     private void updateWeather() {
-        //TODO: Call the new sunshine service here instead of "doInBackground"
-
-//        Intent intent = new Intent(getActivity(), SunshineService.AlarmReceiver.class);
-//        intent.putExtra(SunshineService.LOCATION_QUERY_EXTRA, Utility.getPreferredLocation(getActivity()));
-//
-//        PendingIntent refreshWeather = PendingIntent.getBroadcast(getActivity(), 0, intent, PendingIntent.FLAG_ONE_SHOT);
-//
-//
-//        AlarmManager am = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
-//        //trigger in 5 seconds;
-//        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+5000, refreshWeather);
-
         SunshineSyncAdapter.syncImmediately(getActivity());
-
-
     }
 
 
