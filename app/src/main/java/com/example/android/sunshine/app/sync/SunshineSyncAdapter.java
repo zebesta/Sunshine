@@ -343,8 +343,20 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 // Student: call bulkInsert to add the weatherEntries to the database here
                 ContentValues[] cvArray = new ContentValues[cVVector.size()];
                 getContext().getContentResolver().bulkInsert(WeatherContract.WeatherEntry.CONTENT_URI, cVVector.toArray(cvArray));
+
+
+                //Delete entries with a date older than yesterday
+                String where = WeatherContract.WeatherEntry.COLUMN_DATE+" <?";
+                //String[] args = new String[] { yesterdayTime};
+                String[] args = new String[] {Long.toString(dayTime.setJulianDay(julianStartDay-1))};
+                getContext().getContentResolver().delete( WeatherContract.WeatherEntry.CONTENT_URI, where, args );
+                Log.d("NOTI76", "Deleting entires where: " + where + " with arguments: " + args[0]);
+                Log.d("NOTI76", "Current time is: " + Long.toString(dayTime.setJulianDay(julianStartDay)));
+
+
                 notifyWeather();
             }
+
 
 
         } catch (JSONException e) {
