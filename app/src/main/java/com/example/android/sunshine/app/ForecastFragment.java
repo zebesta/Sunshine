@@ -279,7 +279,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 c.moveToPosition(0);
                 String posLat = c.getString(COL_COORD_LAT);
                 String posLong = c.getString(COL_COORD_LONG);
+
+                //Data URI to simply open map at coordinates
                 Uri geoLocation = Uri.parse("geo:" + posLat + "," + posLong);
+
+                //If you want to drop a pin at coords and label it as weather map location, use this format
+                //Uri geoLocation = Uri.parse("geo:0,0?q=" + posLat + "," + posLong+"(Weather Map Location)");
 
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(geoLocation);
