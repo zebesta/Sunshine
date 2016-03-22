@@ -2,39 +2,49 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:background="@color/sunshine_blue">
+    android:orientation="horizontal">
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingLeft="60dp"
-        android:gravity="center_vertical"
+        android:gravity="center_vertical|center_horizontal"
         android:layout_weight="1">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/list_item_date_textview"
+<<<<<<< HEAD
             android:fontFamily="sans-serif-condensed"
             android:textSize="22sp"
             android:textColor="@color/text_light"
             />
+=======
+            android:text="Today"/>
+>>>>>>> parent of 2a07f45... Merge branch 'sw600'
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/list_item_high_textview"
+<<<<<<< HEAD
             android:fontFamily="sans-serif-light"
             android:textSize="72sp"
             android:textColor="@color/text_light"
             />
+=======
+            android:text="35°"/>
+>>>>>>> parent of 2a07f45... Merge branch 'sw600'
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/list_item_low_textview"
+<<<<<<< HEAD
             android:fontFamily="sans-serif-light"
             android:textSize="36sp"
             android:textColor="@color/text_light"
             />
+=======
+            android:text="25°"/>
+>>>>>>> parent of 2a07f45... Merge branch 'sw600'
     </LinearLayout>
     <LinearLayout
         android:layout_width="wrap_content"
@@ -43,16 +53,27 @@
         android:gravity="center_vertical|center_horizontal"
         android:layout_weight="1">
         <ImageView
+<<<<<<< HEAD
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:id="@+id/list_item_icon" />
+=======
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/list_item_icon"
+            android:src="@drawable/ic_launcher"/>
+>>>>>>> parent of 2a07f45... Merge branch 'sw600'
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/list_item_forecast_textview"
+<<<<<<< HEAD
             android:fontFamily="sans-serif-condensed"
             android:textSize="22sp"
             android:textColor="@color/text_light"/>
+=======
+            android:text="Clear"/>
+>>>>>>> parent of 2a07f45... Merge branch 'sw600'
     </LinearLayout>
 
 </LinearLayout>

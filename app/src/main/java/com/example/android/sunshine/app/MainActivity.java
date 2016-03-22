@@ -16,15 +16,18 @@
 package com.example.android.sunshine.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.android.sunshine.app.data.DetailFragment;
 
-public class MainActivity extends ActionBarActivity implements ForecastFragment.Callback {
+public class MainActivity extends ActionBarActivity {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     public String mLocation;
@@ -44,18 +47,21 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
 
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.weather_detail_container, new DetailFragment(), DETAILFRAGMENT_TAG)
+                        .replace(R.id.weather_detail_container, new DetailFragment())
                         .commit();
             }
-        } else {
-            mTwoPane = false;
-            getSupportActionBar().setElevation(0f);
-        }
+        } else mTwoPane = false;
 
-        ForecastFragment forecastFragment = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
-
-        forecastFragment.SetUseTodayLayout(!mTwoPane);
-
+//        if (savedInstanceState == null) {
+//            getSupportFragmentManager().beginTransaction()
+//                    .add(R.id.container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
+//                    .commit();
+//        }
+//        SharedPreferences sharedPrefs =
+//                PreferenceManager.getDefaultSharedPreferences(this);
+//        String mLocation = sharedPrefs.getString(
+//                getString(R.string.pref_location_key),
+//                getString(R.string.pref_location_default));
     }
 
     @Override
@@ -63,6 +69,7 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
         super.onResume();
         String location = Utility.getPreferredLocation(this);
 
+<<<<<<< HEAD
         if (location != null && !location.equals(mLocation)) {
             ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
             if (null != ff) {
@@ -73,6 +80,17 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
                 df.onLocationChanged(location);
             }
             mLocation = location;
+=======
+        if (location != null && location != mLocation){
+            ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
+            if (null != ff){
+                ff.onLocationChanged();
+            }
+            DetailFragment df = (DetailFragment) getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
+            if (null !=df){
+                df.onLocationChanged(location);
+            }
+>>>>>>> parent of 2a07f45... Merge branch 'sw600'
         }
 //        if (Utility.getPreferredLocation(this) != mLocation) {
 //            ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
@@ -105,35 +123,34 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
             return true;
         }
 
+        if (id == R.id.action_map) {
+            openPreferredLocationInMap();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
+    private void openPreferredLocationInMap() {
+        SharedPreferences sharedPrefs =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        String location = sharedPrefs.getString(
+                getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default));
 
-    @Override
-    public void onItemSelected(Uri dateUri) {
-        if (mTwoPane) {
+        // Using the URI scheme for showing a location found on a map.  This super-handy
+        // intent can is detailed in the "Common Intents" page of Android's developer site:
+        // http://developer.android.com/guide/components/intents-common.html#Maps
+        Uri geoLocation = Uri.parse("geo:0,0?").buildUpon()
+                .appendQueryParameter("q", location)
+                .build();
 
-            //create new detail fragment with index as a passed argument (position of the clicked item in the list?)
-            DetailFragment df = new DetailFragment();
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(geoLocation);
 
-            //Bundles can be used to pass things in
-            Bundle args = new Bundle();
-            //pass date as a parcable
-            args.putParcelable(DetailFragment.DETAIL_URI, dateUri);
-
-
-            //update fragment manager to show the new detail fragment
-            df.setArguments(args);
-
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.weather_detail_container, df, DETAILFRAGMENT_TAG)
-                    .commit();
-        } else {
-            //handle the phone UI case with a single pane by starting the detail activity
-            Intent intent = new Intent(this, DetailActivity.class)
-                    .setData(dateUri);
+        if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
-
+        } else {
+            Log.d(LOG_TAG, "Couldn't call " + location + ", no receiving apps installed!");
         }
     }
 }

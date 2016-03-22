@@ -19,16 +19,11 @@ public class ForecastAdapter extends CursorAdapter {
 
     private static final int VIEW_TYPE_TODAY = 0;
     private static final int VIEW_TYPE_FUTURE_DAY = 1;
-    public boolean mUseTodayView;
 
     public ForecastAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
     }
 
-    //create public setter method for mUseTodayView
-    public void SetUseTodayLayout(boolean useTodayLayout){
-        mUseTodayView=useTodayLayout;
-    }
     /**
      * Prepare the weather high/lows for presentation.
      */
@@ -38,6 +33,10 @@ public class ForecastAdapter extends CursorAdapter {
         return highLowStr;
     }
 
+    /*
+        This is ported from FetchWeatherTask --- but now we go straight from the cursor to the
+        string.
+     */
     private String convertCursorRowToUXFormat(Cursor cursor) {
         // get row indices for our cursor
         //REPLACED dynamic row indice calculation with constants and a projection in the forecast fragment
@@ -66,7 +65,7 @@ public class ForecastAdapter extends CursorAdapter {
         int layoutId = -1;
         if (viewType == VIEW_TYPE_TODAY){
             layoutId = R.layout.list_item_forecast_today;
-        }else {
+        }else if (viewType == VIEW_TYPE_FUTURE_DAY){
             layoutId = R.layout.list_item_forecast;
         }
 
@@ -83,7 +82,7 @@ public class ForecastAdapter extends CursorAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        if (position ==0 && mUseTodayView){
+        if (position ==0){
             return VIEW_TYPE_TODAY;
         }else return VIEW_TYPE_FUTURE_DAY;
     }
@@ -106,8 +105,6 @@ public class ForecastAdapter extends CursorAdapter {
 
         //set description
         viewHolder.forecastDescriptionView.setText(cursor.getString(ForecastFragment.COL_WEATHER_DESC));
-        //set test for content description for accessibility
-        viewHolder.forecastDescriptionView.setContentDescription(cursor.getString(ForecastFragment.COL_WEATHER_DESC));
 
         //set high
         viewHolder.highTempView.setText(Utility.formatTemperature(context, cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP),isMetric));

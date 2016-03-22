@@ -1,8 +1,15 @@
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/ForecastTheme"
     android:id="@+id/fragment_forecast"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+<<<<<<< HEAD
     tools:context="com.example.android.sunshine.app.ForecastFragment"
     tools:layout="@android:layout/list_content" />
+=======
+    tools:context=".MainActivity"
+    tools:ignore="MergeRootFrame"
+    android:name="com.example.android.sunshine.app.ForecastFragment"
+    tools:layout="@android:layout/list_content"
+    />
+>>>>>>> parent of 2a07f45... Merge branch 'sw600'
