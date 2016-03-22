@@ -72,8 +72,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private static final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
     private String mForecastStr;
     private Uri mUri;
-<<<<<<< HEAD
-=======
+
 
     //private MyView myView;
     private TextView dayView;
@@ -96,7 +95,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         return f;
     }
->>>>>>> sw600
+
 
     public int getShownIndex() {
         return getArguments().getInt("index", 0);
@@ -116,10 +115,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-<<<<<<< HEAD
-        //TODO: Move the text view and image view id finds here so that they are only found once instead of every time the data is updated.
-=======
->>>>>>> sw600
+
 
         //get the arguments that the fragment was initialized with
         Bundle arguments = getArguments();
@@ -242,13 +238,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             //set description
             descView.setText(desc);
             //set icon
-<<<<<<< HEAD
-            ImageView icon = (ImageView) getView().findViewById(R.id.list_item_icon);
-            icon.setImageResource(R.drawable.ic_launcher);
-=======
             icon.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
             icon.setContentDescription(desc);
->>>>>>> sw600
 
             //set wind
             windView.setText(Utility.getFormattedWind(getActivity(), windSpeed, windDirection));
@@ -282,20 +273,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public void onLoaderReset(Loader<Cursor> loader) {
     }
 
-<<<<<<< HEAD
-    public void onLocationChanged(String newLocation) {
-        // replace the uri, since the location has changed
-        Uri uri = mUri;
-        if (null != uri) {
-            long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
-            Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
-=======
     public void onLocationChanged(String location) {
         Uri uri = mUri;
         if (null != uri) {
             long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
             Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(location, date);
->>>>>>> sw600
             mUri = updatedUri;
             getLoaderManager().restartLoader(MY_LOADER_ID, null, this);
         }

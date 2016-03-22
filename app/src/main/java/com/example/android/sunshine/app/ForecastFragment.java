@@ -237,9 +237,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         mForecastAdapter.swapCursor(null);
 
     }
-<<<<<<< HEAD
-    
-=======
 
 
     /**
@@ -302,5 +299,4 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         }
     }
->>>>>>> sw600
 }

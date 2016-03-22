@@ -62,18 +62,7 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
     protected void onResume() {
         super.onResume();
         String location = Utility.getPreferredLocation(this);
-<<<<<<< HEAD
 
-        if (location != null && location != mLocation){
-            ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
-            if (null != ff){
-                ff.onLocationChanged();
-            }
-            DetailFragment df = (DetailFragment) getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
-            if (null !=df){
-                df.onLocationChanged(location);
-            }
-=======
         if (location != null && !location.equals(mLocation)) {
             ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
             if (null != ff) {
@@ -84,7 +73,6 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
                 df.onLocationChanged(location);
             }
             mLocation = location;
->>>>>>> sw600
         }
 //        if (Utility.getPreferredLocation(this) != mLocation) {
 //            ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);

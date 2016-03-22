@@ -98,17 +98,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             final String APP_ID = "APPID";
             final String APP_KEY = "99c1da3dd06bf5bda6d3d333273554c8";
 
-<<<<<<< HEAD:app/src/main/java/com/example/android/sunshine/app/FetchWeatherTask.java
-        long locationId;
-        Cursor cursor = mContext.getContentResolver().query(
-                WeatherContract.LocationEntry.CONTENT_URI, //table
-                new String[]{WeatherContract.LocationEntry._ID}, //columns to return
-                WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ?", //selection
-                new String[]{locationSetting}, //Selection arguments
-                null,
-                null
-        );
-=======
+
             Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
                     .appendQueryParameter(QUERY_PARAM, locationQuery + ",USA")
                     .appendQueryParameter(FORMAT_PARAM, format)
@@ -116,31 +106,14 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                     .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
                     .appendQueryParameter(APP_ID, APP_KEY)
                     .build();
->>>>>>> sw600:app/src/main/java/com/example/android/sunshine/app/sync/SunshineSyncAdapter.java
 
             URL url = new URL(builtUri.toString());
             Log.d(LOG_TAG, "The URL used to fetch the JSON is: " + url);
 
-<<<<<<< HEAD:app/src/main/java/com/example/android/sunshine/app/FetchWeatherTask.java
-        //If the cursor returned a valid position, return the ID of the row the cursor is pointing at
-        if (cursor.moveToFirst()) {
-            locationId = cursor.getLong(cursor.getColumnIndex(WeatherContract.LocationEntry._ID));
-            //return cursor.getLong(cursor.getColumnIndex(WeatherContract.LocationEntry._ID));
-        }
-        //if it did not return location, create the location's content values and insert them in to the table
-        else {
-            //populate the content values with the values passed to addLocation
-            ContentValues values = new ContentValues();
-            values.put(WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING, locationSetting);
-            values.put(WeatherContract.LocationEntry.COLUMN_CITY_NAME, cityName);
-            values.put(WeatherContract.LocationEntry.COLUMN_COORD_LAT, lat);
-            values.put(WeatherContract.LocationEntry.COLUMN_COORD_LONG, lon);
-=======
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
->>>>>>> sw600:app/src/main/java/com/example/android/sunshine/app/sync/SunshineSyncAdapter.java
 
             // Read the input stream into a String
             InputStream inputStream = urlConnection.getInputStream();
@@ -159,28 +132,6 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 buffer.append(line + "\n");
             }
 
-<<<<<<< HEAD:app/src/main/java/com/example/android/sunshine/app/FetchWeatherTask.java
-            //query for the new values just added
-            Cursor insertedCursor = mContext.getContentResolver().query(
-                    WeatherContract.LocationEntry.CONTENT_URI, //table
-                    new String[]{WeatherContract.LocationEntry._ID}, //columns to return
-                    WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ?", //selection
-                    new String[]{locationSetting}, //Selection arguments
-                    null,
-                    null
-            );
-            //The ID is at the end of the returned URI
-            locationId = ContentUris.parseId(insertedUri);
-//            if (insertedCursor.moveToFirst()){
-//                return insertedCursor.getLong(insertedCursor.getColumnIndex(WeatherContract.LocationEntry._ID));
-//            }
-
-
-        }
-        //Close cursor and return long for where cursor is pointing to
-        cursor.close();
-        return locationId;
-=======
             if (buffer.length() == 0) {
                 // Stream was empty.  No point in parsing.
                 return;
@@ -211,7 +162,6 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         // This will only happen if there was an error getting or parsing the forecast.
         return;
 
->>>>>>> sw600:app/src/main/java/com/example/android/sunshine/app/sync/SunshineSyncAdapter.java
     }
 
     /**
@@ -478,32 +428,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-<<<<<<< HEAD:app/src/main/java/com/example/android/sunshine/app/FetchWeatherTask.java
-            if (buffer.length() == 0) {
-                // Stream was empty.  No point in parsing.
-                return null;
-            }
-            forecastJsonStr = buffer.toString();
-            getWeatherDataFromJson(forecastJsonStr, locationQuery);
-            Log.d("JSON", "The buffer is showing: "+forecastJsonStr);
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Error ", e);
-            // If the code didn't successfully get the weather data, there's no point in attemping
-            // to parse it.
-            return null;
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, "Error: "+e);
-            e.printStackTrace();
-        } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (final IOException e) {
-                    Log.e(LOG_TAG, "Error closing stream", e);
-=======
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void notifyWeather() {
         Context context = getContext();
@@ -581,7 +506,6 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                             (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 // mId allows you to update the notification later on.
                     mNotificationManager.notify(WEATHER_NOTIFICATION_ID, mBuilder.build());
->>>>>>> sw600:app/src/main/java/com/example/android/sunshine/app/sync/SunshineSyncAdapter.java
                 }
             }
         }
