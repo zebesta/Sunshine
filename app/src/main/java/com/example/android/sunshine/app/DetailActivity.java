@@ -24,7 +24,7 @@ import android.view.MenuItem;
 
 import com.example.android.sunshine.app.data.DetailFragment;
 
-public class DetailActivity extends ActionBarActivity{
+public class DetailActivity extends ActionBarActivity {
 
 
     @Override
@@ -32,8 +32,13 @@ public class DetailActivity extends ActionBarActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         if (savedInstanceState == null) {
+            Bundle arguments = new Bundle();
+            arguments.putParcelable(DetailFragment.DETAIL_URI, getIntent().getData());
+            DetailFragment df = new DetailFragment();
+            df.setArguments(arguments);
+
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.weather_detail_container, new DetailFragment())
+                    .add(R.id.weather_detail_container, df)
                     .commit();
         }
     }

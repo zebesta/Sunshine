@@ -15,12 +15,11 @@
  */
 package com.example.android.sunshine.app;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -36,14 +35,23 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.android.sunshine.app.data.WeatherContract;
+import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 
 /**
  * Encapsulates fetching the forecast and displaying it as a {@link ListView} layout.
  */
-public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    public static final String POSITION = "position";
+    public static final String LOG_TAG =  ForecastFragment.class.getSimpleName();
+    Callback mCallback;
+    int mPosition;
+    int mSavedPosition;
+    boolean mUseTodayLayout;
 
     private ForecastAdapter mForecastAdapter;
     private static final int MY_LOADER_ID = 666;
+
+
 
     private static final String[] FORECAST_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
@@ -86,10 +94,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public ForecastFragment() {
     }
 
-    public void onLocationChanged(){
+    public void onLocationChanged() {
         updateWeather();
         getLoaderManager().restartLoader(MY_LOADER_ID, null, this);
     }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
 
@@ -98,6 +107,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         getLoaderManager().initLoader(MY_LOADER_ID, null, this);
 
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(POSITION, mSavedPosition);
     }
 
     @Override
@@ -119,18 +134,26 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_refresh) {
-            updateWeather();
+
+
+        if (id == R.id.action_map) {
+            openPreferredLocationInMap();
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
 
         mForecastAdapter = new ForecastAdapter(getActivity(), null, 0);
+        mForecastAdapter.SetUseTodayLayout(mUseTodayLayout);
+
+        if (savedInstanceState != null) {
+            mSavedPosition = savedInstanceState.getInt(POSITION);
+        }
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -145,12 +168,16 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 // if it cannot seek to that position.
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
+                    //update location setting
                     String locationSetting = Utility.getPreferredLocation(getActivity());
-                    Intent intent = new Intent(getActivity(), DetailActivity.class)
-                            .setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
-                                    locationSetting, cursor.getLong(COL_WEATHER_DATE)
-                            ));
-                    startActivity(intent);
+                    //update Uri with new location setting and date received from cursor
+                    Uri weatherUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, cursor.getLong(COL_WEATHER_DATE));
+                    //call the main activities Callback function
+                    ((Callback) getActivity()).onItemSelected(weatherUri);
+                    mPosition = position;
+                    mSavedPosition = position;
+
+
                 }
 
             }
@@ -160,18 +187,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     private void updateWeather() {
-        FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String location = prefs.getString(getString(R.string.pref_location_key),
-                getString(R.string.pref_location_default));
-        weatherTask.execute(location);
+        SunshineSyncAdapter.syncImmediately(getActivity());
     }
 
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        updateWeather();
-//    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle) {
@@ -210,6 +228,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         //PERFORM ANY UI UPDATES HERE
 
+        ListView lv = (ListView) getView().findViewById(R.id.listview_forecast);
+        lv.smoothScrollToPosition(mSavedPosition);
     }
 
     @Override
@@ -217,5 +237,70 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         mForecastAdapter.swapCursor(null);
 
     }
+<<<<<<< HEAD
     
+=======
+
+
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callback {
+        /**
+         * DetailFragmentCallback for when an item has been selected.
+         */
+        public void onItemSelected(Uri dateUri);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mCallback = (Callback) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement Callback");
+        }
+    }
+
+    //Method to set whether or not to use the today layout as a seperate layout in the list view
+    //dont do in two pane mode
+    public void SetUseTodayLayout(boolean useTodayView) {
+        mUseTodayLayout = useTodayView;
+        if (mForecastAdapter != null) {
+            mForecastAdapter.SetUseTodayLayout(useTodayView);
+        }
+    }
+
+    private void openPreferredLocationInMap() {
+        // Using the URI scheme for showing a location found on a map.  This super-handy
+        // intent can is detailed in the "Common Intents" page of Android's developer site:
+        // http://developer.android.com/guide/components/intents-common.html#Maps
+        if ( null != mForecastAdapter ) {
+            Cursor c = mForecastAdapter.getCursor();
+            if ( null != c ) {
+                c.moveToPosition(0);
+                String posLat = c.getString(COL_COORD_LAT);
+                String posLong = c.getString(COL_COORD_LONG);
+
+                //Data URI to simply open map at coordinates
+                Uri geoLocation = Uri.parse("geo:" + posLat + "," + posLong);
+
+                //If you want to drop a pin at coords and label it as weather map location, use this format
+                //Uri geoLocation = Uri.parse("geo:0,0?q=" + posLat + "," + posLong+"(Weather Map Location)");
+
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(geoLocation);
+
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(intent);
+                } else {
+                    Log.d(LOG_TAG, "Couldn't call " + geoLocation.toString() + ", no receiving apps installed!");
+                }
+            }
+
+        }
+    }
+>>>>>>> sw600
 }

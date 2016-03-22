@@ -18,24 +18,35 @@
         android:padding="16dp">
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/list_item_day_textview"
-            android:padding="16dp"/>
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="24sp"
+            android:textColor="@color/text_black"
+            />
         <TextView
             android:id="@+id/list_item_date_textview"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+<<<<<<< HEAD
             android:padding="16dp"/>
         <!--<TextView-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="wrap_content"-->
         <!--android:id="@+id/list_item_date_textview"/>-->
+=======
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="16sp"
+            android:textColor="@color/text_grey"
+            />
+>>>>>>> sw600
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="16dp">
+            android:layout_gravity="center"
+            >
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -49,13 +60,25 @@
                     android:id="@+id/list_item_high_textview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+<<<<<<< HEAD
                     android:padding="16dp"/>
+=======
+                    android:textSize="72sp"
+                    android:textColor="@color/text_black"
+                    android:layout_gravity="center_horizontal"/>
+>>>>>>> sw600
 
                 <TextView
                     android:id="@+id/list_item_low_textview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+<<<<<<< HEAD
                     android:padding="16dp"/>
+=======
+                    android:textSize="48sp"
+                    android:textColor="@color/text_grey"
+                    android:paddingLeft="2dp"/>
+>>>>>>> sw600
             </LinearLayout>
 
             <LinearLayout
@@ -63,44 +86,77 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:gravity="center_vertical"
+                android:gravity="center"
                 android:padding="16dp">
 
                 <ImageView
                     android:id="@+id/list_item_icon"
+<<<<<<< HEAD
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_launcher"
                     android:padding="16dp"/>
+=======
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+
+                    />
+>>>>>>> sw600
 
                 <TextView
                     android:id="@+id/list_item_forecast_textview"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+<<<<<<< HEAD
                     android:gravity="center_horizontal"
                     android:padding="16dp"/>
+=======
+                    android:textSize="22sp"
+                    android:textColor="@color/text_grey"
+
+                     />
+>>>>>>> sw600
             </LinearLayout>
 
         </LinearLayout>
 
         <TextView
+            style="@style/WeatherConditionItem"
             android:id="@+id/list_item_humidity"
+<<<<<<< HEAD
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="2dp"
             android:text="Humidity: 100%"/>
+=======
+            />
+>>>>>>> sw600
 
         <TextView
+            style="@style/WeatherConditionItem"
             android:id="@+id/list_item_wind"
+<<<<<<< HEAD
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"/>
+=======
+            />
+>>>>>>> sw600
 
         <TextView
+            style="@style/WeatherConditionItem"
             android:id="@+id/list_item_pressure"
+<<<<<<< HEAD
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"/>
+=======
+            />
+        <!--<com.example.android.sunshine.app.MyView-->
+            <!--android.id="@+id/list_item_compass"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content" />-->
+>>>>>>> sw600
 
     </LinearLayout>
 </ScrollView>

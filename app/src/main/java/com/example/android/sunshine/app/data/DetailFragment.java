@@ -62,6 +62,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     static final int COL_WIND_SPEED = 7;
     static final int COL_DEGREES = 8;
     static final int COL_PRESSURE = 9;
+    public static final String DETAIL_URI = "Detail URI index";
 
     private ShareActionProvider mShareActionProvider;
     private static final int MY_LOADER_ID = 666;
@@ -71,7 +72,35 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private static final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
     private String mForecastStr;
     private Uri mUri;
+<<<<<<< HEAD
+=======
 
+    //private MyView myView;
+    private TextView dayView;
+    private TextView dateView;
+    private TextView highView;
+    private TextView lowView;
+    private TextView descView;
+    private ImageView icon;
+    private TextView windView;
+    private TextView humidityView;
+    private TextView pressureView;
+
+    public static DetailFragment newInstance(int index) {
+        DetailFragment f = new DetailFragment();
+
+//        supply index input as an argument
+//        Bundle args = new Bundle();
+//        args.putInt("index", index);
+//        f.setArguments(args);
+
+        return f;
+    }
+>>>>>>> sw600
+
+    public int getShownIndex() {
+        return getArguments().getInt("index", 0);
+    }
 
     public DetailFragment() {
         setHasOptionsMenu(true);
@@ -87,10 +116,28 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+<<<<<<< HEAD
         //TODO: Move the text view and image view id finds here so that they are only found once instead of every time the data is updated.
+=======
+>>>>>>> sw600
 
+        //get the arguments that the fragment was initialized with
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mUri = arguments.getParcelable(DETAIL_URI);
+        }
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
+        //myView = (MyView) rootView.findViewById(R.id.list_item_compass);
+        dayView = (TextView) rootView.findViewById(R.id.list_item_day_textview);
+        dateView = (TextView) rootView.findViewById(R.id.list_item_date_textview);
+        highView = (TextView) rootView.findViewById(R.id.list_item_high_textview);
+        lowView = (TextView) rootView.findViewById(R.id.list_item_low_textview);
+        descView = (TextView) rootView.findViewById(R.id.list_item_forecast_textview);
+        icon = (ImageView) rootView.findViewById(R.id.list_item_icon);
+        windView = (TextView) rootView.findViewById(R.id.list_item_wind);
+        humidityView = (TextView) rootView.findViewById(R.id.list_item_humidity);
+        pressureView = (TextView) rootView.findViewById(R.id.list_item_pressure);
 
         return rootView;
     }
@@ -135,21 +182,21 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 // Returns a new CursorLoader
 
 
-                Intent intent = getActivity().getIntent();
+                //mUri is now coming from the arguments passed from main activity
+                if (mUri != null) {
 
-                if(intent == null || intent.getData()==null){
+                    return new CursorLoader(
+                            getActivity(),   // Parent activity context
+                            mUri, //intent.getData(),        // Table to query
+                            DETAIL_COLUMNS,       // Projection to return
+                            null,            // No selection clause
+                            null,            // No selection arguments
+                            null             // Default sort order
+
+                    );
+                } else {
                     return null;
                 }
-
-                return new CursorLoader(
-                        getActivity(),   // Parent activity context
-                        intent.getData(),        // Table to query
-                        DETAIL_COLUMNS,       // Projection to return
-                        null,            // No selection clause
-                        null,            // No selection arguments
-                        null             // Default sort order
-
-                );
             default:
                 // An invalid id was passed in
                 return null;
@@ -185,37 +232,42 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             //tv.setText(mForecastStr);
 
             //set day
-            TextView dayView = (TextView) getView().findViewById(R.id.list_item_day_textview);
             dayView.setText(day);
             //set date
-            TextView dateView = (TextView) getView().findViewById(R.id.list_item_date_textview);
             dateView.setText(date);
             //set high
-            TextView highView = (TextView) getView().findViewById(R.id.list_item_high_textview);
             highView.setText(high);
             //set low
-            TextView lowView = (TextView) getView().findViewById(R.id.list_item_low_textview);
             lowView.setText(low);
             //set description
-            TextView descView = (TextView) getView().findViewById(R.id.list_item_forecast_textview);
             descView.setText(desc);
             //set icon
+<<<<<<< HEAD
             ImageView icon = (ImageView) getView().findViewById(R.id.list_item_icon);
             icon.setImageResource(R.drawable.ic_launcher);
+=======
+            icon.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
+            icon.setContentDescription(desc);
+>>>>>>> sw600
 
             //set wind
-            //TODO: Need to actually pull wind speed and direction from the API request (as well as humidity and Pressure
-            //float windSpeed = 10;//data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED));
-            //float windDirection = 10;//data.getFloat(data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DEGREES));
-            TextView windView = (TextView) getView().findViewById(R.id.list_item_wind);
             windView.setText(Utility.getFormattedWind(getActivity(), windSpeed, windDirection));
 
+
+            //TODO: Get this compass to properly update wind direction
+            Log.d("COMPASS", "Im drawing to the compass and my wind direction is: " + windDirection);
+           //myView.setDegrees(windDirection);
+//            compass.invalidate();
+//            if (compass != null) {
+//                compass.updateData(windDirection);
+//                Log.d("COMPASS", "Im drawing to the compass and my wind direction is: "+windDirection);
+//            }
+
+
             //set humidity
-            TextView humidityView = (TextView) getView().findViewById(R.id.list_item_humidity);
             humidityView.setText("Humidity: " + humidity);
 
             //set pressure
-            TextView pressureView = (TextView) getView().findViewById(R.id.list_item_pressure);
             pressureView.setText("Pressure: " + pressure);
 
 
@@ -230,12 +282,20 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public void onLoaderReset(Loader<Cursor> loader) {
     }
 
+<<<<<<< HEAD
     public void onLocationChanged(String newLocation) {
         // replace the uri, since the location has changed
         Uri uri = mUri;
         if (null != uri) {
             long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
             Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
+=======
+    public void onLocationChanged(String location) {
+        Uri uri = mUri;
+        if (null != uri) {
+            long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
+            Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(location, date);
+>>>>>>> sw600
             mUri = updatedUri;
             getLoaderManager().restartLoader(MY_LOADER_ID, null, this);
         }
