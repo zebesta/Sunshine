@@ -6,6 +6,15 @@
 
     <ListView
         android:id="@+id/listview_forecast"
-        style="@style/ForecastListItem"/>
+        style="@style/ForecastListItem" />
+    <TextView
+        android:id="@+id/empty_listview_forecast"
+        android:text="@string/empty_listview_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        android:gravity="center_horizontal"
+        />
 
 </FrameLayout>
+

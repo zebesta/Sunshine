@@ -28,7 +28,7 @@
     <string name="pref_location_key" translatable="false">location</string>
 
     <!-- Default postal code for location preference [CHAR LIMIT=NONE] -->
-    <string name="pref_location_default" translatable="false">11206</string>
+    <string name="pref_location_default" translatable="false">77401</string>
 
     <!-- Label for the temperature units preference [CHAR LIMIT=30] -->
     <string name="pref_units_label">Temperature Units</string>
@@ -92,5 +92,7 @@
     <string name="pref_enable_notifications_true">Enabled</string>
     <string name="pref_enable_notifications_false">Not Enabled</string>
     <string name="pref_enable_notifications_default" translatable="false">true</string>
+    <string name="empty_listview_text">No Weather Information Available</string>
+    <string name="empty_listview_text_nonetwork">"No Network Connection Detected! Network not available to fetch weather data."</string>
 
 </resources>

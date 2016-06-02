@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
@@ -42,15 +43,16 @@ import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
  */
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     public static final String POSITION = "position";
-    public static final String LOG_TAG =  ForecastFragment.class.getSimpleName();
+    public static final String LOG_TAG = ForecastFragment.class.getSimpleName();
     Callback mCallback;
     int mPosition;
     int mSavedPosition;
     boolean mUseTodayLayout;
+    TextView mEmptyListView;
+
 
     private ForecastAdapter mForecastAdapter;
     private static final int MY_LOADER_ID = 666;
-
 
 
     private static final String[] FORECAST_COLUMNS = {
@@ -134,10 +136,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-//        if (id == R.id.action_refresh) {
-//            updateWeather();
-//            return true;
-//        }
+        if (id == R.id.action_refresh) {
+            updateWeather();
+            return true;
+        }
 
         if (id == R.id.action_map) {
             openPreferredLocationInMap();
@@ -162,6 +164,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         // Get a reference to the ListView, and attach this adapter to it.
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
+        mEmptyListView = (TextView) rootView.findViewById(R.id.empty_listview_forecast);
+        listView.setEmptyView(mEmptyListView);
         listView.setAdapter(mForecastAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -232,7 +236,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         //PERFORM ANY UI UPDATES HERE
 
         ListView lv = (ListView) getView().findViewById(R.id.listview_forecast);
-        lv.smoothScrollToPosition(mSavedPosition);
+        if (mPosition != ListView.INVALID_POSITION) {
+            lv.smoothScrollToPosition(mSavedPosition);
+        }
+        updateEmptyView();
     }
 
     @Override
@@ -277,9 +284,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         // Using the URI scheme for showing a location found on a map.  This super-handy
         // intent can is detailed in the "Common Intents" page of Android's developer site:
         // http://developer.android.com/guide/components/intents-common.html#Maps
-        if ( null != mForecastAdapter ) {
+        if (null != mForecastAdapter) {
             Cursor c = mForecastAdapter.getCursor();
-            if ( null != c ) {
+            if (null != c) {
                 c.moveToPosition(0);
                 String posLat = c.getString(COL_COORD_LAT);
                 String posLong = c.getString(COL_COORD_LONG);
@@ -300,6 +307,21 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 }
             }
 
+        }
+    }
+
+    /**
+     * Updates the empty list with a message indicating why the list is not populated
+     */
+    private void updateEmptyView() {
+        if (mForecastAdapter.getCount() == 0) {
+            if (mEmptyListView != null) {
+                if (!Utility.isNetworkAvailable(getActivity().getApplicationContext())) {
+                    mEmptyListView.setText(R.string.empty_listview_text_nonetwork);
+                } else {
+                    mEmptyListView.setText(R.string.empty_listview_text);
+                }
+            }
         }
     }
 }
