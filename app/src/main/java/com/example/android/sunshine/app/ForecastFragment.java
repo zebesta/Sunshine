@@ -17,9 +17,11 @@ package com.example.android.sunshine.app;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -41,7 +43,8 @@ import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 /**
  * Encapsulates fetching the forecast and displaying it as a {@link ListView} layout.
  */
-public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
+        SharedPreferences.OnSharedPreferenceChangeListener {
     public static final String POSITION = "position";
     public static final String LOG_TAG = ForecastFragment.class.getSimpleName();
     Callback mCallback;
@@ -248,6 +251,15 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        Log.d(LOG_TAG, "There was a change to shared preference: " + key);
+        if (key.equals(String.valueOf(R.string.pref_location_status_key))){
+            updateEmptyView();
+        }
+
+    }
+
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -314,14 +326,43 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
      * Updates the empty list with a message indicating why the list is not populated
      */
     private void updateEmptyView() {
+
         if (mForecastAdapter.getCount() == 0) {
             if (mEmptyListView != null) {
-                if (!Utility.isNetworkAvailable(getActivity().getApplicationContext())) {
-                    mEmptyListView.setText(R.string.empty_listview_text_nonetwork);
-                } else {
-                    mEmptyListView.setText(R.string.empty_listview_text);
+                String message = null;
+                @SunshineSyncAdapter.LocationStatus int location = Utility.getLocationStatus(getActivity().getApplicationContext());
+                switch(location) {
+                    case SunshineSyncAdapter.LOCATION_STATUS_OK:
+                        message = String.valueOf(R.string.empty_listview_text);
+                        break;
+                    case SunshineSyncAdapter.LOCATION_STATUS_SERVER_DOWN:
+                        message = String.valueOf(R.string.empty_forecast_list_server_down);
+                        break;
+                    case SunshineSyncAdapter.LOCATION_STATUS_SERVER_INVALID:
+                        message = String.valueOf(R.string.empty_forecast_list_server_error);
+                        break;
+                    default:
+                        if(!Utility.isNetworkAvailable(getActivity().getApplicationContext())){
+                            message = String.valueOf(R.string.empty_listview_text_nonetwork);
+                        }
+                        break;
                 }
+                mEmptyListView.setText(message);
             }
         }
+    }
+
+    @Override
+    public void onResume() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        sp.registerOnSharedPreferenceChangeListener(this);
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        sp.registerOnSharedPreferenceChangeListener(this);
+        super.onPause();
     }
 }

@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.IntDef;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.Time;
 import android.util.Log;
@@ -37,6 +38,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Vector;
@@ -48,6 +51,32 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
             WeatherContract.WeatherEntry.COLUMN_SHORT_DESC
     };
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({LOCATION_STATUS_OK, LOCATION_STATUS_SERVER_DOWN, LOCATION_STATUS_SERVER_INVALID, LOCATION_STATUS_UNKNOWN})
+    public @interface LocationStatus {}
+    public static final int LOCATION_STATUS_OK = 0;
+    public static final int LOCATION_STATUS_SERVER_DOWN = 1;
+    public static final int LOCATION_STATUS_SERVER_INVALID = 2;
+    public static final int LOCATION_STATUS_UNKNOWN = 3;
+
+    /**
+     * Sets location status in the shared preferences
+     * @param c Context to get pref manager from
+     * @param locationStatus The IntDef valye from the set correlating to the error
+     */
+    public void setLocationStatus(Context c, @LocationStatus int locationStatus) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(c);
+        SharedPreferences.Editor sharedPreferenceEditor = sharedPreferences.edit();
+        sharedPreferenceEditor.putInt(String.valueOf(R.string.pref_location_status_key), locationStatus);
+        sharedPreferenceEditor.commit();
+        //set location mode here and store it in to the location mode shared preferences
+
+    }
+
+
+    //    public abstract void setNavigationMode(@LocationStatus int mode);
+//    @LocationStatus
+//    public abstract int getNavigationMode();
     // these indices must match the projection
     private static final int INDEX_WEATHER_ID = 0;
     private static final int INDEX_MAX_TEMP = 1;
@@ -132,6 +161,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             }
 
             if (buffer.length() == 0) {
+                setLocationStatus(getContext(), LOCATION_STATUS_SERVER_DOWN);
                 // Stream was empty.  No point in parsing.
                 return;
             }
@@ -139,11 +169,13 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             Log.d("JSON", "The buffer is showing: " + forecastJsonStr);
             getWeatherDataFromJson(forecastJsonStr, locationQuery);
         } catch (IOException e) {
+            setLocationStatus(getContext(), LOCATION_STATUS_SERVER_DOWN);
             Log.e(LOG_TAG, "Error ", e);
             // If the code didn't successfully get the weather data, there's no point in attemping
             // to parse it.
             return;
         } catch (JSONException e) {
+            setLocationStatus(getContext(), LOCATION_STATUS_SERVER_INVALID);
             e.printStackTrace();
         } finally {
             if (urlConnection != null) {
@@ -358,9 +390,12 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             }
 
 
+            setLocationStatus(getContext(), LOCATION_STATUS_OK);
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
+            setLocationStatus(getContext(), LOCATION_STATUS_SERVER_INVALID);
+
             e.printStackTrace();
         }
         //return null;
